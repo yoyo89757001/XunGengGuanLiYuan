@@ -37,7 +37,7 @@ public class Utils {
 
 
     //头部参数
-   public static final String signaturePassword = "WB!2#4%6&8<.?;";
+   public static final String signaturePassword = "XG!2#4%6&8<.?;";
   // private String nonce = RandomUtils.generateMixInteger(6);
 
 

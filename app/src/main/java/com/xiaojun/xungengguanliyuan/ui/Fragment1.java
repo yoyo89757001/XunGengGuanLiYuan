@@ -20,7 +20,6 @@ import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter;
 import com.github.jdsjlzx.recyclerview.ProgressStyle;
 import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.adapter.F1Adapter;
-import com.xiaojun.xungengguanliyuan.adapter.RenWuLiuChengAdapter;
 import com.xiaojun.xungengguanliyuan.beans.NamesBean;
 import com.xiaojun.xungengguanliyuan.dialog.NameDialog;
 import com.xiaojun.xungengguanliyuan.intface.ClickIntface;
@@ -30,7 +29,6 @@ import com.xiaojun.xungengguanliyuan.views.WrapContentLinearLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 
 
 /**
@@ -122,7 +120,7 @@ public class Fragment1 extends Fragment implements ClickIntface {
                 dialog.setOnPositiveListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        
+
                     }
                 });
                 dialog.setCancelListener(new View.OnClickListener() {

@@ -128,10 +128,8 @@ public class MyAppLaction extends Application {
         if (mDaoSession.getDengLuBeanDao().load(123456L)==null){
             DengLuBean baoCunBean=new DengLuBean();
             baoCunBean.setId(123456L);
-            baoCunBean.setZhuji("http://14.23.169.42:8090/api/");
+            baoCunBean.setZhuji("http://14.23.169.42:8899/api/");
             mDaoSession.getDengLuBeanDao().insert(baoCunBean);
-        }else {
-           mDaoSession.clear();
         }
 
     }

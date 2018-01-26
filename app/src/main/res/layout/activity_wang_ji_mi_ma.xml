@@ -39,9 +39,46 @@
         android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp">
 
+            <TextView
+                android:textSize="16sp"
+                android:textColor="@color/blake"
+                android:text="账号"
+                android:id="@+id/t0"
+                android:layout_marginLeft="16dp"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:background="@color/lvse"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+
+
+            <EditText
+                android:textSize="16sp"
+                android:textColor="@color/blake"
+                android:paddingRight="16dp"
+                android:hint="请输入账号"
+                android:id="@+id/zhanghao"
+                android:background="@null"
+                android:textColorHint="@color/lvse"
+                android:gravity="right|center_vertical"
+                android:layout_toRightOf="@+id/t0"
+                android:layout_marginLeft="16dp"
+                android:layout_centerVertical="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="52dp">
 
