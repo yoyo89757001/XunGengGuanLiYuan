@@ -48,6 +48,7 @@ public class DengLuBeanDao extends AbstractDao<DengLuBean, Long> {
         public final static Property QqTime = new Property(23, String.class, "qqTime", false, "QQ_TIME");
         public final static Property Mima = new Property(24, String.class, "mima", false, "MIMA");
         public final static Property Company = new Property(25, String.class, "company", false, "COMPANY");
+        public final static Property Region_code = new Property(26, String.class, "region_code", false, "REGION_CODE");
     }
 
 
@@ -88,7 +89,8 @@ public class DengLuBeanDao extends AbstractDao<DengLuBean, Long> {
                 "\"STATUS\" INTEGER NOT NULL ," + // 22: status
                 "\"QQ_TIME\" TEXT," + // 23: qqTime
                 "\"MIMA\" TEXT," + // 24: mima
-                "\"COMPANY\" TEXT);"); // 25: company
+                "\"COMPANY\" TEXT," + // 25: company
+                "\"REGION_CODE\" TEXT);"); // 26: region_code
     }
 
     /** Drops the underlying database table. */
@@ -182,6 +184,11 @@ public class DengLuBeanDao extends AbstractDao<DengLuBean, Long> {
         if (company != null) {
             stmt.bindString(26, company);
         }
+ 
+        String region_code = entity.getRegion_code();
+        if (region_code != null) {
+            stmt.bindString(27, region_code);
+        }
     }
 
     @Override
@@ -269,6 +276,11 @@ public class DengLuBeanDao extends AbstractDao<DengLuBean, Long> {
         if (company != null) {
             stmt.bindString(26, company);
         }
+ 
+        String region_code = entity.getRegion_code();
+        if (region_code != null) {
+            stmt.bindString(27, region_code);
+        }
     }
 
     @Override
@@ -304,7 +316,8 @@ public class DengLuBeanDao extends AbstractDao<DengLuBean, Long> {
             cursor.getInt(offset + 22), // status
             cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // qqTime
             cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // mima
-            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25) // company
+            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // company
+            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26) // region_code
         );
         return entity;
     }
@@ -337,6 +350,7 @@ public class DengLuBeanDao extends AbstractDao<DengLuBean, Long> {
         entity.setQqTime(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
         entity.setMima(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
         entity.setCompany(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
+        entity.setRegion_code(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
      }
     
     @Override

@@ -147,7 +147,7 @@ public class RenWuLiuChengActivity extends Activity {
             public void onBeaconsDiscovered(Region region,
                                             final List<Beacon> beacons) {
 
-                // Log.i(TAG, "------------------------------beacons.size = " + beacons.size());
+                 Log.i("kkkkkkkkkkkk", "beacons.size = " + beacons.toString());
                 myBeacons.clear();
                 if (beacons.size()>0)
                 myBeacons.addAll(beacons);
@@ -157,7 +157,10 @@ public class RenWuLiuChengActivity extends Activity {
                     if ( myBeacons.get(0).getDistance()<=5.0){
                         if (isShow){
                             isShow=false;
-                            startActivity(new Intent(RenWuLiuChengActivity.this,DaKaActivity.class));
+                            startActivity(new Intent(RenWuLiuChengActivity.this,DaKaActivity.class)
+                            .putExtra("recordId",stringList.get(0).getId()).putExtra("itemId",stringList.get(0).getItem_id())
+                                    .putExtra("lineId",stringList.get(0).getLine_id())
+                                    .putExtra("patrolId",stringList.get(0).getXungeng_id()));
 
                         }
                     }
@@ -203,19 +206,22 @@ public class RenWuLiuChengActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter();
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }else {
-            //开启扫描
-            Log.d("MainActivity", "扫描开始");
+        if (dengLuBean.getStatus()!=0){
+            final BluetoothManager bluetoothManager =
+                    (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+            BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter();
+            if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }else {
+                //开启扫描
+                Log.d("MainActivity", "扫描开始");
 
-            connectToService();
+                connectToService();
 
+            }
         }
+
     }
 
     @Override

@@ -36,8 +36,12 @@ import com.sdsmdg.tastytoast.TastyToast;
 import com.xiaojun.xungengguanliyuan.MyAppLaction;
 import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.beans.DataSynEvent;
+import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
+import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
+import com.xiaojun.xungengguanliyuan.beans.FanHuiBean;
 import com.xiaojun.xungengguanliyuan.beans.MainBean;
 import com.xiaojun.xungengguanliyuan.beans.XuanGengDian;
+import com.xiaojun.xungengguanliyuan.cookies.CookiesManager;
 import com.xiaojun.xungengguanliyuan.dialog.TiJIaoDialog;
 import com.xiaojun.xungengguanliyuan.intface.ClickIntface2;
 import com.xiaojun.xungengguanliyuan.utils.FileUtil;
@@ -55,12 +59,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -76,7 +82,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     Button yulan;
     private ZhaoPianAdapter zhaoPianAdapter = null;
     private List<String> stringList;
-    private RecyclerView recyclerView, recyclerView2;
+    private RecyclerView recyclerView;
     private File mSavePhotoFile = null;
     private ImageView shiping_im;
     private String video_uri = null;
@@ -84,16 +90,24 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     private String video_screenshot = null;
     private DataSynEvent dataSynEvent=null;
     private TiJIaoDialog tiJIaoDialog=null;
+    private DengLuBean dengLuBean=null;
+    private DengLuBeanDao dengLuBeanDao=null;
+    private int recordId,itemId,lineId,patrolId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "创建");
 
-
+        dengLuBeanDao= MyAppLaction.myAppLaction.getDaoSession().getDengLuBeanDao();
+        dengLuBean=dengLuBeanDao.load(123456L);
         video_uri = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_URI);
         output_directory = getIntent().getStringExtra(MediaRecorderActivity.OUTPUT_DIRECTORY);
         video_screenshot = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_SCREENSHOT);
+        recordId=getIntent().getIntExtra("recordId",-1);
+        itemId=getIntent().getIntExtra("itemId",-1);
+        lineId=getIntent().getIntExtra("lineId",-1);
+        patrolId=getIntent().getIntExtra("patrolId",-1);
 
         if (video_uri != null || output_directory != null && video_screenshot != null) {
 
@@ -159,6 +173,14 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
             }
         });
 
+        SpringEffect.doEffectSticky(findViewById(R.id.tijiao), new Runnable() {
+            @Override
+            public void run() {
+
+                link_P1(stringList);
+            }
+        });
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
@@ -182,7 +204,6 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
             EventBus.getDefault().unregister(this);//解除订阅
             EventBus.getDefault().post(new MainBean(true,false));
         }
-
         super.onDestroy();
     }
 
@@ -472,86 +493,86 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     private void link_save() {
         showDialog();
 
-        final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient okHttpClient= MyAppLaction.getOkHttpClient();
-
-        // String jiami= Utils.jiami(mima).toUpperCase();
-        String nonce= Utils.getNonce();
-        String timestamp=Utils.getTimestamp();
-
-//    /* form的分割线,自己定义 */
-//        String boundary = "xx--------------------------------------------------------------xx";
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("cmd","100");
-            jsonObject.put("lineId",lineId);
-            //  jsonObject.put("password",jiami);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        RequestBody body = RequestBody.create(JSON, jsonObject.toString());
-
-        Request.Builder requestBuilder = new Request.Builder()
-                .header("nonce", nonce)
-                .header("timestamp", timestamp)
-                .header("userId", dengLuBean.getUserId()+"")
-                .header("sign", Utils.encode("100"+lineId+nonce+timestamp
-                        +dengLuBean.getUserId()+ Utils.signaturePassword))
-                .post(body)
-                .url(dengLuBean.getZhuji() + "patrols.app");
-//        Log.d("LogingActivity", "100"+zhanghao+jiami+nonce+timestamp
-//                +"0"+ Utils.signaturePassword);
-        // step 3：创建 Call 对象
-        Call call = okHttpClient.newCall(requestBuilder.build());
-
-        //step 4: 开始异步请求
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d("AllConnects", "请求识别失败"+e.getMessage());
-                dismissDialog();
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                dismissDialog();
-
-                Log.d("AllConnects", "请求识别成功"+call.request().toString());
-                //获得返回体
-                try {
-
-                    ResponseBody body = response.body();
-                    String ss=body.string().trim();
-                    Log.d("InFoActivity", "ss" + ss);
-                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
-                    Gson gson=new Gson();
-                    // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();
-                    XuanGengDian zhaoPianBean=gson.fromJson(jsonObject,XuanGengDian.class);
-                    if (jsonObject.get("dtoResult").getAsString().equals("0")){
-                        //  showMSG(jsonObject.get("dtoDesc").getAsString(),4);
-                        stringList.addAll(zhaoPianBean.getObjects());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-
-                    }else {
-
-                        showMSG(jsonObject.get("dtoDesc").getAsString(),4);
-                    }
-
-                }catch (Exception e){
-
-                    dismissDialog();
-                    showMSG("获取数据失败",3);
-                    Log.d("WebsocketPushMsg", e.getMessage());
-                }
-            }
-        });
+//        final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+//        OkHttpClient okHttpClient= MyAppLaction.getOkHttpClient();
+//
+//        // String jiami= Utils.jiami(mima).toUpperCase();
+//        String nonce= Utils.getNonce();
+//        String timestamp=Utils.getTimestamp();
+//
+////    /* form的分割线,自己定义 */
+////        String boundary = "xx--------------------------------------------------------------xx";
+//        JSONObject jsonObject = new JSONObject();
+//        try {
+//            jsonObject.put("cmd","100");
+//            jsonObject.put("lineId",lineId);
+//            //  jsonObject.put("password",jiami);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        RequestBody body = RequestBody.create(JSON, jsonObject.toString());
+//
+//        Request.Builder requestBuilder = new Request.Builder()
+//                .header("nonce", nonce)
+//                .header("timestamp", timestamp)
+//                .header("userId", dengLuBean.getUserId()+"")
+//                .header("sign", Utils.encode("100"+lineId+nonce+timestamp
+//                        +dengLuBean.getUserId()+ Utils.signaturePassword))
+//                .post(body)
+//                .url(dengLuBean.getZhuji() + "patrols.app");
+////        Log.d("LogingActivity", "100"+zhanghao+jiami+nonce+timestamp
+////                +"0"+ Utils.signaturePassword);
+//        // step 3：创建 Call 对象
+//        Call call = okHttpClient.newCall(requestBuilder.build());
+//
+//        //step 4: 开始异步请求
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+//                dismissDialog();
+//
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//
+//                dismissDialog();
+//
+//                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+//                //获得返回体
+//                try {
+//
+//                    ResponseBody body = response.body();
+//                    String ss=body.string().trim();
+//                    Log.d("InFoActivity", "ss" + ss);
+//                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+//                    Gson gson=new Gson();
+//                    // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();
+//                    XuanGengDian zhaoPianBean=gson.fromJson(jsonObject,XuanGengDian.class);
+//                    if (jsonObject.get("dtoResult").getAsString().equals("0")){
+//                        //  showMSG(jsonObject.get("dtoDesc").getAsString(),4);
+//                        stringList.addAll(zhaoPianBean.getObjects());
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                adapter.notifyDataSetChanged();
+//                            }
+//                        });
+//
+//                    }else {
+//
+//                        showMSG(jsonObject.get("dtoDesc").getAsString(),4);
+//                    }
+//
+//                }catch (Exception e){
+//
+//                    dismissDialog();
+//                    showMSG("获取数据失败",3);
+//                    Log.d("WebsocketPushMsg", e.getMessage());
+//                }
+//            }
+//        });
 
     }
 
@@ -581,5 +602,176 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         });
     }
 
+    public static final int TIMEOUT = 1000 * 180;
+    private void link_P1(List<String> stringList) {
+        showDialog();
+        String nonce=Utils.getNonce();
+        String timestamp=Utils.getTimestamp();
 
+        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
+        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .cookieJar(new CookiesManager())
+                .retryOnConnectionFailure(true)
+                .build();
+        MultipartBody mBody;
+        MultipartBody.Builder builder=new MultipartBody.Builder().setType(MultipartBody.FORM);
+
+
+
+        builder.addFormDataPart("cmd","100");
+        builder.addFormDataPart("recordId",recordId+"");
+        builder.addFormDataPart("itemId",itemId+"");
+        builder.addFormDataPart("lineId",lineId+"");
+        builder.addFormDataPart("patrolId",patrolId+"");
+        Log.d("DaKaActivity", "recordId:" + recordId);
+        Log.d("DaKaActivity", "itemId:" + itemId);
+        Log.d("DaKaActivity", "lineId:" + lineId);
+        Log.d("DaKaActivity", "patrolId:" + patrolId);
+
+        if (stringList.size()>1){
+            StringBuilder buffer = new StringBuilder();
+            int ss2=stringList.size()-1;
+            for (int i=0;i<ss2;i++){
+                File file1 = new File(stringList.get(i));
+                RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream") , file1);
+                //去掉前面的路径
+                builder. addFormDataPart("imageFile" , stringList.get(i).substring(stringList.get(i).lastIndexOf("/")+1,stringList.get(i).length()), fileBody1);
+
+                if (i<ss2-1){
+                    buffer.append(stringList.get(i).substring(stringList.get(i).lastIndexOf("/")+1,stringList.get(i).length()));
+                    buffer.append(";");
+                }else {
+                    buffer.append(stringList.get(i).substring(stringList.get(i).lastIndexOf("/")+1,stringList.get(i).length()));
+                }
+            }
+            builder.addFormDataPart("imgs",buffer.toString());
+           Log.d("DaKaActivity", buffer.toString());
+        }else {
+            builder.addFormDataPart("imgs","");
+        }
+        Log.d("DaKaActivity", dataSynEvent.getVideo_uri()+"");
+        if (dataSynEvent.getVideo_uri()!=null){
+
+            File file1 = new File(dataSynEvent.getVideo_uri());
+            RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream") , file1);
+            //去掉前面的路径
+            builder. addFormDataPart("imageFile" , dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
+                    .lastIndexOf("/")+1,dataSynEvent.getVideo_uri().length()), fileBody1);
+            builder.addFormDataPart("vedios",dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
+                    .lastIndexOf("/")+1,dataSynEvent.getVideo_uri().length()));
+            Log.d("DaKaActivity", dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
+                    .lastIndexOf("/") + 1, dataSynEvent.getVideo_uri().length()));
+        }else {
+            builder.addFormDataPart("vedios","");
+        }
+
+        builder.addFormDataPart("other","");
+
+
+//        JSONObject tijiao = null;
+//        // JSONArray jsonArray=null;
+//        try {
+//            tijiao = new JSONObject();
+//            tijiao.put("recordId",0);
+//            tijiao.put("id",0);
+//            tijiao.put("accountId",dengLuBean.getUserId());
+//            tijiao.put("address",dizhi.getText().toString().trim());
+//            tijiao.put("companyId",dengLuBean.getCompanyId());
+//            tijiao.put("deviceId",shebeiID);
+//            tijiao.put("planId",itemsBeanList.get(p1).getId());
+//            tijiao.put("deviceNumber",bianhao);
+//            tijiao.put("faultTime",System.currentTimeMillis());
+//            tijiao.put("remark",guzhangEt.getText().toString().trim());
+//            tijiao.put("contactTel",dianhua.getText().toString());
+//            tijiao.put("faultImage",dengJiBean.getFaultImage());
+//
+//            // jsonArray=new JSONArray();
+//            // jsonArray.put(tijiao);
+//
+//            // jsonObject.put("cmd","100");
+//            // jsonObject.put("faults",jsonArray);
+//            //  Log.d("BaoZhangDengJiActivity", jsonObject.toString());
+//            //   jsonObject.put("password",jiami);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+
+
+        mBody=builder.build();
+        //   Log.d("BaoZhangDengJiActivity", tijiao.toString());
+
+//         /* 第一个要上传的file */
+//       File file1 = new File(filename1);
+//        RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream") , file1);
+//        final String file1Name = System.currentTimeMillis()+"testFile1.jpg";
+//
+//
+//        MultipartBody mBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+//            /* 底下是上传了两个文件 */
+//                .addFormDataPart("file" , file1Name , fileBody1)
+//                  /* 上传一个普通的String参数 */
+//                //  .addFormDataPart("subject_id" , subject_id+"")
+//                //  .addFormDataPart("image_2" , file2Name , fileBody2)
+//                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                // .header("Content-Type", "application/json")
+                .header("nonce", nonce)
+                .header("timestamp", timestamp)
+                .header("userId", dengLuBean.getUserId()+"")
+                .header("sign", Utils.encode("100"+nonce+timestamp
+                        +dengLuBean.getUserId()+Utils.signaturePassword))
+                .post(mBody)
+                .url(dengLuBean.getZhuji() + "addPatrol.app");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                dismissDialog();
+                showMSG("上传图片出错",4);
+                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                dismissDialog();
+                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                //获得返回体
+                try {
+
+                    ResponseBody body = response.body();
+                    String ss=body.string();
+
+                    //  link_save(dengJiBean);
+                    Log.d("AllConnects", "aa   "+ss);
+
+                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson=new Gson();
+                    FanHuiBean zhaoPianBean=gson.fromJson(jsonObject,FanHuiBean.class);
+                    if (zhaoPianBean.getDtoResult()==0){
+
+
+                        showMSG("提交成功",4);
+                        finish();
+                    }else if (zhaoPianBean.getDtoResult()==-33){
+                        showMSG("登录过期,请重新登录",4);
+                    }
+
+                }catch (Exception e){
+                    dismissDialog();
+                    showMSG("上传图片出错",4);
+                    Log.d("WebsocketPushMsg", e.getMessage());
+                }
+            }
+        });
+
+    }
 }

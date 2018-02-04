@@ -182,7 +182,7 @@ public class LogingActivity extends Activity {
                     if (jsonObject.get("dtoResult").getAsString().equals("0")){
                         showMSG(jsonObject.get("dtoDesc").getAsString(),4);
                         int  type=-1;
-                        if (zhaoPianBean.getRole_id()==100000){
+                        if (zhaoPianBean.getRole_id()==10000005||zhaoPianBean.getRole_id()==10000003){
                             //管理员
                             type=0;
 

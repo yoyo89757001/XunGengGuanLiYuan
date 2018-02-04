@@ -199,16 +199,16 @@
 
             <Button
                 android:id="@+id/tijiao"
-                android:textColor="@color/write"
-                android:textSize="18sp"
-                android:text="提 交"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/zidonghuoqu_lvse"
                 android:layout_width="match_parent"
-                android:layout_height="48dp" />
+                android:layout_height="48dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/zidonghuoqu_lvse"
+                android:text="提 交"
+                android:textColor="@color/write"
+                android:textSize="18sp" />
 
 
         </LinearLayout>

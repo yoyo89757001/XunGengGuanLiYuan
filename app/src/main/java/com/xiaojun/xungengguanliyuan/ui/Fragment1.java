@@ -29,6 +29,7 @@ import com.xiaojun.xungengguanliyuan.adapter.F1Adapter;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
 import com.xiaojun.xungengguanliyuan.beans.NamesBean;
+import com.xiaojun.xungengguanliyuan.beans.RenBean;
 import com.xiaojun.xungengguanliyuan.beans.XianLuBean;
 import com.xiaojun.xungengguanliyuan.dialog.NameDialog;
 import com.xiaojun.xungengguanliyuan.dialog.TiJIaoDialog;
@@ -64,7 +65,7 @@ public class Fragment1 extends Fragment {
     private List<XianLuBean.ObjectsBean> stringList=new ArrayList<>();
     private F1Adapter adapter;
     private TextView name;
-    private List<NamesBean> nameString=new ArrayList<>();
+    private List<RenBean.ObjectsBean> nameString=new ArrayList<>();
     private DengLuBean dengLuBean=null;
     private DengLuBeanDao dengLuBeanDao=null;
     private TiJIaoDialog tiJIaoDialog=null;
@@ -84,10 +85,7 @@ public class Fragment1 extends Fragment {
         name= (TextView) view.findViewById(R.id.name);
         lRecyclerView = (LRecyclerView) view.findViewById(R.id.recyclerView);
         adapter = new F1Adapter(stringList);
-        for (int i=0;i<10;i++){
-            nameString.add(new NamesBean("dd",false));
 
-        }
 
 
         lRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
@@ -142,9 +140,17 @@ public class Fragment1 extends Fragment {
             public void run() {
 
                 final NameDialog dialog=new NameDialog(getContext(),nameString);
+                dialog.gengxin();
                 dialog.setOnPositiveListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (dialog.getData()!=null){
+                            name.setText(dialog.getData().getName());
+                            if (stringList.size()>0)
+                                stringList.clear();
+                            link_lines(dialog.getData().getId());
+                        }
+                        dialog.dismiss();
 
                     }
                 });
@@ -160,14 +166,15 @@ public class Fragment1 extends Fragment {
             }
         });
         if (dengLuBean.getStatus()!=0){
-            //管理员
-            view.findViewById(R.id.name_ll).setVisibility(View.GONE);
-        }else {
 
-            link_lines();
+            view.findViewById(R.id.name_ll).setVisibility(View.GONE);
+            link_lines(dengLuBean.getUserId());
+        }else {
+            link_ren();
+
         }
 
-        link_lines();
+
         return view;
     }
 
@@ -181,7 +188,7 @@ public class Fragment1 extends Fragment {
 
 
 
-    private void link_lines() {
+    private void link_lines(long idid) {
         showDialog();
 
         final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
@@ -197,7 +204,7 @@ public class Fragment1 extends Fragment {
         try {
             jsonObject.put("cmd","101");
             jsonObject.put("itemId","0");
-          //  jsonObject.put("password",jiami);
+            jsonObject.put("userId",idid);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -207,7 +214,7 @@ public class Fragment1 extends Fragment {
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
                 .header("userId", dengLuBean.getUserId()+"")
-                .header("sign", Utils.encode("101"+"0"+nonce+timestamp
+                .header("sign", Utils.encode("101"+"0"+idid+nonce+timestamp
                         +dengLuBean.getUserId()+ Utils.signaturePassword))
                 .post(body)
                 .url(dengLuBean.getZhuji() + "lines.app");
@@ -281,6 +288,99 @@ public class Fragment1 extends Fragment {
             }
         });
     }
+
+    private void link_ren() {
+        showDialog();
+
+        final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient okHttpClient= MyAppLaction.getOkHttpClient();
+
+        //  String jiami= Utils.jiami(mima).toUpperCase();
+        final String nonce=Utils.getNonce();
+        String timestamp=Utils.getTimestamp();
+
+//    /* form的分割线,自己定义 */
+//        String boundary = "xx--------------------------------------------------------------xx";
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("cmd","100");
+            jsonObject.put("region",dengLuBean.getRegion_code());
+            //  jsonObject.put("password",jiami);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody body = RequestBody.create(JSON, jsonObject.toString());
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("nonce", nonce)
+                .header("timestamp", timestamp)
+                .header("userId", dengLuBean.getUserId()+"")
+                .header("sign", Utils.encode("100"+dengLuBean.getRegion_code()+nonce+timestamp
+                        +dengLuBean.getUserId()+ Utils.signaturePassword))
+                .post(body)
+                .url(dengLuBean.getZhuji() + "accounts.app");
+//        Log.d("LogingActivity", "100"+zhanghao+jiami+nonce+timestamp
+//                +"0"+ Utils.signaturePassword);
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+                dismissDialog();
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                dismissDialog();
+
+                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                //获得返回体
+                try {
+
+                    ResponseBody body = response.body();
+                    String ss=body.string().trim();
+                    Log.d("InFoActivity", "ss" + ss);
+                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson=new Gson();
+                    // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();
+                    final RenBean zhaoPianBean=gson.fromJson(jsonObject,RenBean.class);
+                    if (jsonObject.get("dtoResult").getAsString().equals("0")){
+                        //showMSG(jsonObject.get("dtoDesc").getAsString(),4);
+                        if (zhaoPianBean.getObjects().size()>0){
+                            nameString.addAll(zhaoPianBean.getObjects());
+                            link_lines(zhaoPianBean.getObjects().get(0).getId());
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    name.setText(zhaoPianBean.getObjects().get(0).getName());
+                                }
+                            });
+                        }else {
+
+                            showMSG("暂无巡更员数据",4);
+                        }
+
+                    }else {
+
+                        showMSG(jsonObject.get("dtoDesc").getAsString(),4);
+                    }
+
+                }catch (Exception e){
+
+                    dismissDialog();
+                    showMSG("获取数据失败",3);
+                    Log.d("WebsocketPushMsg", e.getMessage());
+                }
+            }
+        });
+
+    }
+
 
 
     private void dismissDialog(){

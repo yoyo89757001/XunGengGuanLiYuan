@@ -33,6 +33,7 @@ import com.aprilbrother.aprilbrothersdk.BeaconManager;
 import com.aprilbrother.aprilbrothersdk.Region;
 import com.aprilbrother.aprilbrothersdk.utils.AprilL;
 import com.sdsmdg.tastytoast.TastyToast;
+import com.xiaojun.xungengguanliyuan.MyAppLaction;
 import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
@@ -67,16 +68,15 @@ public class MainActivity extends FragmentActivity  {
     private static boolean isExit = false;
     private TiJIaoDialog tiJIaoDialog=null;
     private Call call=null;
-    private DengLuBean dengLuBean=null;
-    private DengLuBeanDao dengLuBeanDao=null;
     // private int maxCount=0;
     //定义一个过滤器；
     private IntentFilter intentFilter;
     //定义一个广播监听器；
     private NetChangReceiver netChangReceiver;
-
+    private DengLuBean dengLuBean=null;
+    private DengLuBeanDao dengLuBeanDao=null;
     private static final String TAG = "MainActivity";
-
+    private RelativeLayout zhong_rl;
 
 
 
@@ -92,6 +92,8 @@ public class MainActivity extends FragmentActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dengLuBeanDao= MyAppLaction.myAppLaction.getDaoSession().getDengLuBeanDao();
+        dengLuBean=dengLuBeanDao.load(123456L);
         FragmentManager mFragmentManager = getSupportFragmentManager();
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -105,7 +107,7 @@ public class MainActivity extends FragmentActivity  {
             window.setStatusBarColor(Color.TRANSPARENT);
            // window.setNavigationBarColor(Color.TRANSPARENT);
         }
-        EventBus.getDefault().register(MainActivity.this);//订阅
+      //  EventBus.getDefault().register(MainActivity.this);//订阅
 
         setContentView(R.layout.activity_main);
         //实例化过滤器；
@@ -131,6 +133,9 @@ public class MainActivity extends FragmentActivity  {
                 .callback(listener)
                 .start();
 
+        if (dengLuBean.getStatus()!=0){
+            zhong_rl.setVisibility(View.GONE);
+        }
 
     }
 
@@ -206,10 +211,10 @@ public class MainActivity extends FragmentActivity  {
             call.cancel();
 
         unregisterReceiver(netChangReceiver);
-        if ( EventBus.getDefault().isRegistered(MainActivity.this)){
-            EventBus.getDefault().unregister(this);//解除订阅
-            Log.d(TAG, "解除订阅");
-        }
+//        if ( EventBus.getDefault().isRegistered(MainActivity.this)){
+//            EventBus.getDefault().unregister(this);//解除订阅
+//            Log.d(TAG, "解除订阅");
+//        }
         super.onDestroy();
     }
 
@@ -227,6 +232,7 @@ public class MainActivity extends FragmentActivity  {
         Fragment fragment2 = new Fragment2();
         Fragment fragment3 = new FragmentZhong();
         mFragmentList.add(fragment1);
+        if (dengLuBean.getStatus()==0)
         mFragmentList.add(fragment3);
         mFragmentList.add(fragment2);
     }
@@ -237,7 +243,7 @@ public class MainActivity extends FragmentActivity  {
       //  r1.setOnClickListener(this);
      //   r2= (RelativeLayout) findViewById(R.id.chosenLayout);
        // r2.setOnClickListener(this);
-
+        zhong_rl= (RelativeLayout) findViewById(R.id.zhong_rl);
         tabIm= (ImageView) findViewById(R.id.tabImg);
         tabIm2= (ImageView) findViewById(R.id.tabImg2);
         zhong_im= (ImageView) findViewById(R.id.zhong_im);
@@ -292,11 +298,17 @@ public class MainActivity extends FragmentActivity  {
                 tabText.setTextColor(Color.parseColor("#00C196"));
                 break;
             case 1:
-                zhong_tv.setTextColor(Color.parseColor("#00C196"));
-                tabIm.setImageResource(R.drawable.ic_home);
-                zhong_im.setImageResource(R.drawable.ic_report_p);
-                tabIm2.setImageResource(R.drawable.ic_my);
-
+                if (dengLuBean.getStatus()==0){
+                    zhong_tv.setTextColor(Color.parseColor("#00C196"));
+                    tabIm.setImageResource(R.drawable.ic_home);
+                    zhong_im.setImageResource(R.drawable.ic_report_p);
+                    tabIm2.setImageResource(R.drawable.ic_my);
+                }else {
+                    tabText2.setTextColor(Color.parseColor("#00C196"));
+                    tabIm.setImageResource(R.drawable.ic_home);
+                    zhong_im.setImageResource(R.drawable.ic_report);
+                    tabIm2.setImageResource(R.drawable.ic_my_p);
+                }
                 break;
             case 2:
                 tabText2.setTextColor(Color.parseColor("#00C196"));

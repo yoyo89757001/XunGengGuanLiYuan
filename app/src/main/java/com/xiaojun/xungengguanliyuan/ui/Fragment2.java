@@ -4,6 +4,7 @@ package com.xiaojun.xungengguanliyuan.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class Fragment2 extends Fragment {
         if (baoCunBeanDao!=null){
             baoCunBean=baoCunBeanDao.load(123456L);
         }
+        Log.d("Fragment2", "baoCunBean:" + baoCunBean);
         View view = inflater.inflate(R.layout.fragment_fragment2, container, false);
 
         SpringEffect.doEffectSticky(view.findViewById(R.id.tuichu), new Runnable() {
@@ -84,9 +86,16 @@ public class Fragment2 extends Fragment {
 
             }
         });
-
-
         unbinder = ButterKnife.bind(this, view);
+
+
+
+
+        zhanghao.setText(baoCunBean.getAccount()+"");
+        xingming.setText(baoCunBean.getName()+"");
+        juese.setText(baoCunBean.getStatus()==0?"管理员":"巡更员");
+        shouji.setText(baoCunBean.getPhone()+"");
+        youxiang.setText(baoCunBean.getEmail()+"");
         return view;
     }
 

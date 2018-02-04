@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.adapter.NameAdapter;
 import com.xiaojun.xungengguanliyuan.beans.NamesBean;
+import com.xiaojun.xungengguanliyuan.beans.RenBean;
 import com.xiaojun.xungengguanliyuan.views.WrapContentLinearLayoutManager;
 
 import java.util.List;
@@ -26,14 +27,18 @@ public class NameDialog extends Dialog {
 private TextView cancel,affirm;
 private RecyclerView recyclerView;
 private NameAdapter adapter;
-private List<NamesBean> stringList;
+private List<RenBean.ObjectsBean> stringList;
 private Context context;
 
-    public NameDialog(Context context,List<NamesBean> strings) {
+    public NameDialog(Context context,List<RenBean.ObjectsBean> strings) {
         super(context, R.style.dialog_style2);
         stringList=strings;
         this.context=context;
         setCustomDialog();
+    }
+
+    public void gengxin(){
+        adapter.notifyDataSetChanged();
     }
 
     private void setCustomDialog() {
@@ -51,6 +56,15 @@ private Context context;
 
     }
 
+    public RenBean.ObjectsBean getData(){
+        for (RenBean.ObjectsBean ss: stringList){
+            if (ss.isTrue()){
+                return ss;
+            }
+        }
+        return null;
+
+    }
 
 
     @Override

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.beans.NamesBean;
+import com.xiaojun.xungengguanliyuan.beans.RenBean;
 
 
 import java.util.List;
@@ -19,14 +20,14 @@ import java.util.List;
  */
 
 public class NameAdapter extends RecyclerView.Adapter<NameAdapter.ViewHolder> {
-    private List<NamesBean> datas;
+    private List<RenBean.ObjectsBean> datas;
 
    // private ClickIntface clickIntface;
 //    public void setClickIntface(ClickIntface clickIntface){
 //        this.clickIntface=clickIntface;
 //    }
 
-    public NameAdapter(List<NamesBean> datas) {
+    public NameAdapter(List<RenBean.ObjectsBean> datas) {
         this.datas = datas;
 
     }
@@ -42,7 +43,7 @@ public class NameAdapter extends RecyclerView.Adapter<NameAdapter.ViewHolder> {
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (NamesBean bean:datas){
+                for (RenBean.ObjectsBean bean:datas){
                     bean.setTrue(false);
                 }
                 datas.get(position).setTrue(true);
