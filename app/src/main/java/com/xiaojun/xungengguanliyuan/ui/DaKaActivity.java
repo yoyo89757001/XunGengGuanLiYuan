@@ -28,26 +28,44 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mabeijianxi.smallvideorecord2.MediaRecorderActivity;
 import com.mabeijianxi.smallvideorecord2.model.MediaRecorderConfig;
 import com.sdsmdg.tastytoast.TastyToast;
+import com.xiaojun.xungengguanliyuan.MyAppLaction;
 import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.beans.DataSynEvent;
 import com.xiaojun.xungengguanliyuan.beans.MainBean;
+import com.xiaojun.xungengguanliyuan.beans.XuanGengDian;
+import com.xiaojun.xungengguanliyuan.dialog.TiJIaoDialog;
 import com.xiaojun.xungengguanliyuan.intface.ClickIntface2;
 import com.xiaojun.xungengguanliyuan.utils.FileUtil;
+import com.xiaojun.xungengguanliyuan.utils.GsonUtil;
 import com.xiaojun.xungengguanliyuan.utils.SpringEffect;
+import com.xiaojun.xungengguanliyuan.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
@@ -65,7 +83,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     private String output_directory = null;
     private String video_screenshot = null;
     private DataSynEvent dataSynEvent=null;
-
+    private TiJIaoDialog tiJIaoDialog=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,10 +180,8 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     protected void onDestroy() {
         if (EventBus.getDefault().isRegistered(DaKaActivity.this)) {
             EventBus.getDefault().unregister(this);//解除订阅
-            EventBus.getDefault().post(new MainBean(true));
-            Log.d(TAG, "解除订阅");
+            EventBus.getDefault().post(new MainBean(true,false));
         }
-
 
         super.onDestroy();
     }
@@ -452,4 +468,118 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         }
         return path;
     }
+
+    private void link_save() {
+        showDialog();
+
+        final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient okHttpClient= MyAppLaction.getOkHttpClient();
+
+        // String jiami= Utils.jiami(mima).toUpperCase();
+        String nonce= Utils.getNonce();
+        String timestamp=Utils.getTimestamp();
+
+//    /* form的分割线,自己定义 */
+//        String boundary = "xx--------------------------------------------------------------xx";
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("cmd","100");
+            jsonObject.put("lineId",lineId);
+            //  jsonObject.put("password",jiami);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RequestBody body = RequestBody.create(JSON, jsonObject.toString());
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("nonce", nonce)
+                .header("timestamp", timestamp)
+                .header("userId", dengLuBean.getUserId()+"")
+                .header("sign", Utils.encode("100"+lineId+nonce+timestamp
+                        +dengLuBean.getUserId()+ Utils.signaturePassword))
+                .post(body)
+                .url(dengLuBean.getZhuji() + "patrols.app");
+//        Log.d("LogingActivity", "100"+zhanghao+jiami+nonce+timestamp
+//                +"0"+ Utils.signaturePassword);
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+                dismissDialog();
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                dismissDialog();
+
+                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                //获得返回体
+                try {
+
+                    ResponseBody body = response.body();
+                    String ss=body.string().trim();
+                    Log.d("InFoActivity", "ss" + ss);
+                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson=new Gson();
+                    // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();
+                    XuanGengDian zhaoPianBean=gson.fromJson(jsonObject,XuanGengDian.class);
+                    if (jsonObject.get("dtoResult").getAsString().equals("0")){
+                        //  showMSG(jsonObject.get("dtoDesc").getAsString(),4);
+                        stringList.addAll(zhaoPianBean.getObjects());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+
+                    }else {
+
+                        showMSG(jsonObject.get("dtoDesc").getAsString(),4);
+                    }
+
+                }catch (Exception e){
+
+                    dismissDialog();
+                    showMSG("获取数据失败",3);
+                    Log.d("WebsocketPushMsg", e.getMessage());
+                }
+            }
+        });
+
+    }
+
+    private void showDialog(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (tiJIaoDialog==null){
+                    tiJIaoDialog=new TiJIaoDialog(DaKaActivity.this);
+                    if (!DaKaActivity.this.isFinishing())
+                        tiJIaoDialog.show();
+                }
+            }
+        });
+    }
+
+
+    private void dismissDialog(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (tiJIaoDialog!=null && tiJIaoDialog.isShowing()){
+                    tiJIaoDialog.dismiss();
+                    tiJIaoDialog=null;
+                }
+            }
+        });
+    }
+
+
 }

@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.xiaojun.xungengguanliyuan.R;
+import com.xiaojun.xungengguanliyuan.beans.XuanGengDian;
 import com.xiaojun.xungengguanliyuan.intface.ClickIntface;
 
 import java.util.List;
@@ -18,14 +19,14 @@ import java.util.List;
  */
 
 public class RenWuLiuChengAdapter extends RecyclerView.Adapter<RenWuLiuChengAdapter.ViewHolder> {
-    private List<String> datas;
+    private List<XuanGengDian.ObjectsBean> datas;
     private ClickIntface clickIntface;
 
     public void setClickIntface(ClickIntface clickIntface){
         this.clickIntface=clickIntface;
     }
 
-    public RenWuLiuChengAdapter(List<String> datas) {
+    public RenWuLiuChengAdapter(List<XuanGengDian.ObjectsBean> datas) {
         this.datas = datas;
     }
     //创建新View，被LayoutManager所调用
@@ -37,7 +38,8 @@ public class RenWuLiuChengAdapter extends RecyclerView.Adapter<RenWuLiuChengAdap
     //将数据与界面进行绑定的操作
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-            if (position%2==0){
+            if (datas.get(position).getStatus()==1){//`status` '打卡状态：1:未打卡；2:已打卡'
+
                 viewHolder.ll_bg.setBackgroundResource(R.drawable.zidonghuoqu10);
                 viewHolder.bianhao1.setBackgroundResource(R.drawable.yuan_lv);
                 viewHolder.bianhao1.setTextColor(Color.parseColor("#00C196"));
@@ -51,6 +53,9 @@ public class RenWuLiuChengAdapter extends RecyclerView.Adapter<RenWuLiuChengAdap
                 viewHolder.zhuangtai.setText("已完成");
                 viewHolder.zhuangtai.setBackgroundResource(R.drawable.shixin_hui);
             }
+        viewHolder.bianhao1.setText((position+1)+"");
+        viewHolder.bianhao2.setText("编号:"+datas.get(position).getId()+"");
+        viewHolder.dizhi.setText(datas.get(position).getAddress());
 
     }
     //获取数据的数量

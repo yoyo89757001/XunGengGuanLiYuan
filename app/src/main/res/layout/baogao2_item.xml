@@ -32,19 +32,21 @@
                 android:textSize="16sp"
                 android:textColor="@color/blake"
                 android:text="路线"
+                android:visibility="gone"
                 android:layout_marginLeft="16dp"
                 android:id="@+id/luxian"
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <Button
+            <TextView
                 android:layout_marginLeft="16dp"
                 android:textColor="@color/lvse"
                 android:textSize="16sp"
                 android:layout_marginBottom="16dp"
                 android:text="查看详情"
-                android:layout_marginTop="8dp"
+               android:gravity="center"
+                android:layout_marginTop="12dp"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:background="@drawable/zhongkong_lv"
@@ -58,8 +60,10 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:orientation="vertical"
-            android:layout_margin="10dp"
-            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
             android:background="@drawable/bg_num"
             android:layout_height="match_parent">
@@ -67,7 +71,7 @@
             <TextView
                 android:layout_weight="1"
                 android:textColor="@color/write"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:text="合计任务"
                 android:gravity="center"
                 android:layout_width="match_parent"
@@ -76,14 +80,14 @@
                 android:layout_weight="1"
                 android:textColor="@color/write"
                 android:textSize="16sp"
-                android:text="0"
+                android:id="@+id/heji"
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="0dp" />
             <TextView
                 android:layout_weight="1"
                 android:textColor="@color/write"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:text="代办任务"
                 android:gravity="center"
                 android:layout_width="match_parent"
@@ -93,13 +97,10 @@
                 android:layout_weight="1"
                 android:textColor="@color/write"
                 android:textSize="16sp"
-                android:text="10"
+                android:id="@+id/daiban"
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="0dp" />
-
-
-
 
         </LinearLayout>
 

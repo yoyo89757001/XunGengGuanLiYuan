@@ -74,13 +74,9 @@ public class MainActivity extends FragmentActivity  {
     private IntentFilter intentFilter;
     //定义一个广播监听器；
     private NetChangReceiver netChangReceiver;
-    private final int REQUEST_ENABLE_BT=5678;
-    private static final Region ALL_BEACONS_REGION = new Region(
-            "customRegionName", null, null, null);
-    private BeaconManager beaconManager;
-    private ArrayList<Beacon> myBeacons = new ArrayList<Beacon>();;
+
     private static final String TAG = "MainActivity";
-    private static boolean isShow=true;
+
 
 
 
@@ -112,8 +108,6 @@ public class MainActivity extends FragmentActivity  {
         EventBus.getDefault().register(MainActivity.this);//订阅
 
         setContentView(R.layout.activity_main);
-        AprilL.enableDebugLogging(false);
-        beaconManager = new BeaconManager(MainActivity.this);
         //实例化过滤器；
         intentFilter = new IntentFilter();
         //添加过滤的Action值；
@@ -137,53 +131,11 @@ public class MainActivity extends FragmentActivity  {
                 .callback(listener)
                 .start();
 
-        beaconManager.setRangingListener(new BeaconManager.RangingListener() {
-            @Override
-            public void onBeaconsDiscovered(Region region,
-                                            final List<Beacon> beacons) {
 
-//                for (Beacon beacon : beacons) {
-//                    if (beacon.getRssi() > 0) {
-//                        Log.i(TAG, "rssi = " + beacon.getRssi());
-//                        Log.i(TAG, "mac = " + beacon.getMacAddress());
-//                    }
-//                }
-               // Log.i(TAG, "------------------------------beacons.size = " + beacons.size());
-                myBeacons.clear();
-                myBeacons.addAll(beacons);
-                ComparatorBeaconByRssi com = new ComparatorBeaconByRssi();
-                Collections.sort(myBeacons, com);
-                if (isShow){
-                    isShow=false;
-                    startActivity(new Intent(MainActivity.this,DaKaActivity.class));
-
-                }
-
-
-            }
-        });
-
-        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
-
-            @Override
-            public void onExitedRegion(Region arg0) {
-                showMSG("进入范围",3);
-
-            }
-
-            @Override
-            public void onEnteredRegion(Region arg0, List<Beacon> arg1) {
-                showMSG("不在范围",3);
-            }
-        });
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
-    public void onDataSynEvent(MainBean bean) {
-        Log.d(TAG,"收到"+bean.isIstrue());
-        isShow=true;
-    }
+
 
     private PermissionListener listener = new PermissionListener() {
         @Override
@@ -194,19 +146,7 @@ public class MainActivity extends FragmentActivity  {
             if(requestCode == 300) {
              // Initializes Bluetooth adapter.
 
-                final BluetoothManager bluetoothManager =
-                        (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-                BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter();
-                if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }else {
-                    //开启扫描
-                    Log.d("MainActivity", "扫描开始");
 
-                    connectToService();
-
-                }
 
 
             }
@@ -221,23 +161,7 @@ public class MainActivity extends FragmentActivity  {
     };
 
 
-    /**
-     * 连接服务 开始搜索beacon connect service start scan beacons
-     */
-    private void connectToService() {
-        Log.i(TAG, "connectToService");
-        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
-            @Override
-            public void onServiceReady() {
-                try {
-                    beaconManager.startRanging(ALL_BEACONS_REGION);
-                    // beaconManager.startMonitoring(ALL_BEACONS_REGION);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+
 
 
 
@@ -248,22 +172,7 @@ public class MainActivity extends FragmentActivity  {
         super.onStop();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == Activity.RESULT_OK) {
-                //开始扫描
-                Log.d("MainActivity", "开始扫描");
 
-
-                connectToService();
-
-            } else {
-                showMSG("开启蓝牙失败,无法巡更,请重新开启蓝牙",3);
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     private  class NetChangReceiver extends BroadcastReceiver {
 
@@ -295,13 +204,7 @@ public class MainActivity extends FragmentActivity  {
     protected void onDestroy() {
         if (call!=null)
             call.cancel();
-        try {
-            myBeacons.clear();
-            beaconManager.stopRanging(ALL_BEACONS_REGION);
-            beaconManager.disconnect();
-        } catch (RemoteException e) {
-            Log.d(TAG, "Error while stopping ranging", e);
-        }
+
         unregisterReceiver(netChangReceiver);
         if ( EventBus.getDefault().isRegistered(MainActivity.this)){
             EventBus.getDefault().unregister(this);//解除订阅

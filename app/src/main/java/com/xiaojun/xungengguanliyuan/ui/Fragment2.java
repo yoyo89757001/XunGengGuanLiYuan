@@ -67,8 +67,8 @@ public class Fragment2 extends Fragment {
                         getActivity().sendBroadcast(new Intent("guanbiyemian"));
                         dialog2.dismiss();
                         baoCunBean.setQqTime(null);
-                        baoCunBean.setAccount("");
-                        baoCunBeanDao.deleteAll();
+                        baoCunBean.setAccount(null);
+                        baoCunBeanDao.update(baoCunBean);
 
                       //  link();
                         startActivity(new Intent(getActivity(),LogingActivity.class));

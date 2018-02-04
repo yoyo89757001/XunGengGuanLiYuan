@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.xiaojun.xungengguanliyuan.R;
+import com.xiaojun.xungengguanliyuan.beans.XianLuBean;
 import com.xiaojun.xungengguanliyuan.intface.ClickIntface;
 
 import java.util.List;
@@ -15,14 +16,14 @@ import java.util.List;
  */
 
 public class F1Adapter extends RecyclerView.Adapter<F1Adapter.ViewHolder> {
-    private List<String> datas;
+    private List<XianLuBean.ObjectsBean> datas;
     private ClickIntface clickIntface;
 
     public void setClickIntface(ClickIntface clickIntface){
         this.clickIntface=clickIntface;
     }
 
-    public F1Adapter(List<String> datas) {
+    public F1Adapter(List<XianLuBean.ObjectsBean> datas) {
         this.datas = datas;
     }
     //创建新View，被LayoutManager所调用
@@ -35,7 +36,9 @@ public class F1Adapter extends RecyclerView.Adapter<F1Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
-
+        viewHolder.luxian.setText(datas.get(position).getLine_name());
+        viewHolder.heji.setText(datas.get(position).getTotal()+"");
+        viewHolder.daiban.setText((datas.get(position).getTotal()-datas.get(position).getRecords())+"");
     }
     //获取数据的数量
     @Override
@@ -44,13 +47,14 @@ public class F1Adapter extends RecyclerView.Adapter<F1Adapter.ViewHolder> {
     }
     //自定义的ViewHolder，持有每个Item的的所有界面元素
       class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView t1 ;
+        private TextView luxian ,heji,daiban;
 
 
         private ViewHolder(View view){
             super(view);
-          //  t1 = (TextView) view.findViewById(R.id.t1);
-
+            luxian = (TextView) view.findViewById(R.id.renwu);
+            heji = (TextView) view.findViewById(R.id.heji);
+            daiban = (TextView) view.findViewById(R.id.daiban);
 
         }
     }

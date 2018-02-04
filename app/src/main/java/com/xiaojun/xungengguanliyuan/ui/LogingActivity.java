@@ -186,7 +186,8 @@ public class LogingActivity extends Activity {
                             //管理员
                             type=0;
 
-                        }else if (zhaoPianBean.getRole_id()==200000){
+                        }else //if (zhaoPianBean.getRole_id()==200000)
+                        {
                             //巡更员
                             type=1;
                         }

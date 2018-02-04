@@ -5,11 +5,23 @@ package com.xiaojun.xungengguanliyuan.beans;
  */
 
 public class MainBean {
-    public MainBean(boolean istrue) {
+
+    public MainBean(boolean istrue, boolean isShuaXin) {
         this.istrue = istrue;
+        this.isShuaXin = isShuaXin;
     }
 
     private boolean istrue;
+
+    public boolean isShuaXin() {
+        return isShuaXin;
+    }
+
+    public void setShuaXin(boolean shuaXin) {
+        isShuaXin = shuaXin;
+    }
+
+    private boolean isShuaXin;
 
     public boolean isIstrue() {
         return istrue;
