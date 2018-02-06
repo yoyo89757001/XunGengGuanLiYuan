@@ -148,7 +148,8 @@ public class RenWuLiuChengActivity extends Activity {
                             .putExtra("patrolId", stringList.get(position).getXungeng_id())
                             .putExtra("luxian",luxian)
                             .putExtra("imgs",stringList.get(position).getImgs())
-                            .putExtra("vedios",stringList.get(position).getVedios()));
+                            .putExtra("vedios",stringList.get(position).getVedios())
+                            .putExtra("qita",stringList.get(position).getOther()));
                 }
                 // startActivity(new Intent(RenWuLiuChengActivity.this,RenWuLiuChengActivity.class));
 
@@ -183,8 +184,9 @@ public class RenWuLiuChengActivity extends Activity {
                                                 .putExtra("recordId", stringList.get(i).getId())
                                                 .putExtra("itemId", stringList.get(i).getItem_id())
                                                 .putExtra("lineId", stringList.get(i).getLine_id())
-                                                .putExtra("patrolId", stringList.get(i).getXungeng_id()).
-                                                        putExtra("luxian",luxian));
+                                                .putExtra("patrolId", stringList.get(i).getXungeng_id())
+                                                .putExtra("qita",stringList.get(i).getOther())
+                                                .putExtra("luxian",luxian));
 
                                         break;
                                     }else {

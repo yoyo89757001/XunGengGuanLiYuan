@@ -28,7 +28,6 @@ import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.adapter.F1Adapter;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
-import com.xiaojun.xungengguanliyuan.beans.NamesBean;
 import com.xiaojun.xungengguanliyuan.beans.RenBean;
 import com.xiaojun.xungengguanliyuan.beans.XianLuBean;
 import com.xiaojun.xungengguanliyuan.dialog.NameDialog;
@@ -69,6 +68,7 @@ public class Fragment1 extends Fragment {
     private DengLuBean dengLuBean=null;
     private DengLuBeanDao dengLuBeanDao=null;
     private TiJIaoDialog tiJIaoDialog=null;
+    private int p=0;
 
 
     public Fragment1() {
@@ -105,8 +105,8 @@ public class Fragment1 extends Fragment {
         //设置底部加载文字提示
         lRecyclerView.setFooterViewHint("拼命加载中","--------我是有底线的--------","网络不给力...");
         lRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallSpinFadeLoader);
-        lRecyclerView.setLoadMoreEnabled(false);
-        lRecyclerView.setPullRefreshEnabled(false);
+        //lRecyclerView.setLoadMoreEnabled(false);
+        lRecyclerView.setPullRefreshEnabled(true);
         lRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -123,10 +123,15 @@ public class Fragment1 extends Fragment {
             @Override
             public void onRefresh() {
                 //下拉刷新
-                //   Log.d("Fragment144444", "下拉刷新");
-
+                 //  Log.d("Fragment144444", "下拉刷新");
+                if (dengLuBean.getStatus()!=0){
+                    link_lines(dengLuBean.getUserId());
+                }else {
+                    link_ren();
+                }
             }
         });
+
 
         lRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
@@ -148,7 +153,9 @@ public class Fragment1 extends Fragment {
                             name.setText(dialog.getData().getName());
                             if (stringList.size()>0)
                                 stringList.clear();
-                            link_lines(dialog.getData().getId());
+                            adapter.notifyDataSetChanged();
+                            p=dialog.getData().getId();
+                            link_lines(p);
                         }
                         dialog.dismiss();
 
@@ -168,15 +175,12 @@ public class Fragment1 extends Fragment {
 
             }
         });
+
         if (dengLuBean.getStatus()!=0){
-
             view.findViewById(R.id.name_ll).setVisibility(View.GONE);
-            link_lines(dengLuBean.getUserId());
-        }else {
-            link_ren();
-
         }
 
+        lRecyclerView.forceToRefresh();
 
         return view;
     }
@@ -192,7 +196,7 @@ public class Fragment1 extends Fragment {
 
 
     private void link_lines(long idid) {
-        showDialog();
+      //  showDialog();
 
         final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
         OkHttpClient okHttpClient= MyAppLaction.getOkHttpClient();
@@ -232,6 +236,13 @@ public class Fragment1 extends Fragment {
             public void onFailure(Call call, IOException e) {
                 Log.d("AllConnects", "请求识别失败"+e.getMessage());
                 dismissDialog();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lRecyclerView.refreshComplete(20);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
 
             }
 
@@ -253,10 +264,13 @@ public class Fragment1 extends Fragment {
                     XianLuBean zhaoPianBean=gson.fromJson(jsonObject,XianLuBean.class);
                     if (jsonObject.get("dtoResult").getAsString().equals("0")){
                         //showMSG(jsonObject.get("dtoDesc").getAsString(),4);
+                        if (stringList.size()>0)
+                            stringList.clear();
                         stringList.addAll(zhaoPianBean.getObjects());
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                lRecyclerView.refreshComplete(20);
                                 adapter.notifyDataSetChanged();
                             }
                         });
@@ -264,12 +278,24 @@ public class Fragment1 extends Fragment {
 
 
                     }else {
-
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                lRecyclerView.refreshComplete(20);
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
                         showMSG(jsonObject.get("dtoDesc").getAsString(),4);
                     }
 
                 }catch (Exception e){
-
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lRecyclerView.refreshComplete(20);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                     dismissDialog();
                     showMSG("获取数据失败",3);
                     Log.d("WebsocketPushMsg", e.getMessage());
@@ -293,7 +319,7 @@ public class Fragment1 extends Fragment {
     }
 
     private void link_ren() {
-        showDialog();
+      //  showDialog();
 
         final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
         OkHttpClient okHttpClient= MyAppLaction.getOkHttpClient();
@@ -355,8 +381,10 @@ public class Fragment1 extends Fragment {
                     if (jsonObject.get("dtoResult").getAsString().equals("0")){
                         //showMSG(jsonObject.get("dtoDesc").getAsString(),4);
                         if (zhaoPianBean.getObjects().size()>0){
+                            if (nameString.size()>0)
+                                nameString.clear();
                             nameString.addAll(zhaoPianBean.getObjects());
-                            link_lines(zhaoPianBean.getObjects().get(0).getId());
+                            link_lines(p==0?zhaoPianBean.getObjects().get(0).getId():p);
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

@@ -139,6 +139,15 @@ public class XuanGengDian {
         private String mac;
         private String vedios;
         private String imgs;
+        private String other;
+
+        public String getOther() {
+            return other;
+        }
+
+        public void setOther(String other) {
+            this.other = other;
+        }
 
         public String getVedios() {
             return vedios;

@@ -24,7 +24,7 @@
                 android:textColor="@color/lvse"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="40dp" />
+                android:layout_height="50dp" />
             <View
                 android:layout_width="1dp"
                 android:background="@color/lvse"
@@ -38,7 +38,7 @@
                 android:textColor="@color/lvse"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="40dp" />
+                android:layout_height="50dp" />
         </LinearLayout>
         <View
             android:layout_above="@+id/l1"

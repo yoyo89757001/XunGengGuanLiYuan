@@ -59,7 +59,7 @@
 
         <activity android:name=".ui.RenWuLiuChengActivity" />
         <activity android:name=".ui.DaKaActivity" />
-        <activity android:name=".ui.DaKaActivity_ChaKan" />
+        <activity android:name=".ui.DaKaActivity_ChaKan" android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

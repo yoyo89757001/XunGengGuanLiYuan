@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +56,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -81,6 +81,8 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     Button yulan;
     @BindView(R.id.renwu)
     TextView renwu;
+    @BindView(R.id.qita)
+    EditText qita;
     private ZhaoPianAdapter zhaoPianAdapter = null;
     private List<String> stringList;
     private RecyclerView recyclerView;
@@ -94,8 +96,9 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     private DengLuBean dengLuBean = null;
     private DengLuBeanDao dengLuBeanDao = null;
     private int recordId, itemId, lineId, patrolId;
-    private String luxian=null;
-    private boolean biaozhi=false;
+    private String luxian = null;
+    private boolean biaozhi = false;
+    private String qitas=null;
 
 
     @Override
@@ -111,7 +114,8 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         itemId = getIntent().getIntExtra("itemId", -1);
         lineId = getIntent().getIntExtra("lineId", -1);
         patrolId = getIntent().getIntExtra("patrolId", -1);
-        luxian=getIntent().getStringExtra("luxian");
+        luxian = getIntent().getStringExtra("luxian");
+        qitas=getIntent().getStringExtra("qita");
         if (video_uri != null || output_directory != null && video_screenshot != null) {
 
             EventBus.getDefault().post(new DataSynEvent(video_uri, output_directory, video_screenshot));
@@ -147,7 +151,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         zhaoPianAdapter = new ZhaoPianAdapter(stringList);
         zhaoPianAdapter.setClickIntface(this);
         recyclerView.setAdapter(zhaoPianAdapter);
-        renwu.setText(luxian+"");
+        renwu.setText(luxian + "");
 
 
         SpringEffect.doEffectSticky(findViewById(R.id.shiping_im), new Runnable() {
@@ -185,6 +189,12 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
             }
         });
 
+        qita.setEnabled(false);
+        if (qitas!=null && !qitas.equals(""))
+        qita.setText(qitas);
+        else
+            qita.setText("暂无");
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
@@ -209,7 +219,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
             if (biaozhi)
                 EventBus.getDefault().post(new MainBean(true, true));
             else
-            EventBus.getDefault().post(new MainBean(true, false));
+                EventBus.getDefault().post(new MainBean(true, false));
         }
         super.onDestroy();
     }
@@ -589,6 +599,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
             public void run() {
                 if (tiJIaoDialog == null) {
                     tiJIaoDialog = new TiJIaoDialog(DaKaActivity.this);
+                    tiJIaoDialog.setCanceledOnTouchOutside(false);
                     if (!DaKaActivity.this.isFinishing())
                         tiJIaoDialog.show();
                 }
@@ -610,17 +621,19 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     }
 
     public static final int TIMEOUT = 1000 * 150;
+
     private void link_P1(List<String> stringList) {
         showDialog();
         String nonce = Utils.getNonce();
         String timestamp = Utils.getTimestamp();
-        OkHttpClient okHttpClient =new OkHttpClient.Builder()
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .cookieJar(new CookiesManager())
                 .retryOnConnectionFailure(true)
-                .build();;
+                .build();
+        ;
         MultipartBody mBody;
         MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
@@ -641,12 +654,12 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
                 }
             }
             builder.addFormDataPart("imgs", buffer.toString());
-           // Log.d("DaKaActivity", buffer.toString());
+            // Log.d("DaKaActivity", buffer.toString());
         } else {
             builder.addFormDataPart("imgs", "");
         }
 
-        if (dataSynEvent!=null && dataSynEvent.getVideo_uri() != null) {
+        if (dataSynEvent != null && dataSynEvent.getVideo_uri() != null) {
 
             File file1 = new File(dataSynEvent.getVideo_uri());
             RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream"), file1);
@@ -751,7 +764,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
                     FanHuiBean zhaoPianBean = gson.fromJson(jsonObject, FanHuiBean.class);
                     if (zhaoPianBean.getDtoResult() == 0) {
 
-                        biaozhi=true;
+                        biaozhi = true;
                         showMSG("打卡成功", 4);
                         finish();
                     } else if (zhaoPianBean.getDtoResult() == -33) {

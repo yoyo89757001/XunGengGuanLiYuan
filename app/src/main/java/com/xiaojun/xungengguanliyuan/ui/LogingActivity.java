@@ -110,8 +110,14 @@ public class LogingActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("LogingActivity", "dengLuBean:" + dengLuBean);
+        Log.d("LogingActivity", dengLuBean.getAccount()+"ss");
+        Log.d("LogingActivity", dengLuBean.getZhuji()+"qq");
         if (dengLuBean!=null && dengLuBean.getAccount()!=null && dengLuBean.getZhuji()!=null ){
+            Log.d("LogingActivity", "自动登陆");
             link_save(dengLuBean.getAccount(),dengLuBean.getMima(),1);
+        }else {
+            Log.d("LogingActivity", "手动登陆");
         }
     }
 
@@ -230,6 +236,7 @@ public class LogingActivity extends Activity {
             public void run() {
                 if (tiJIaoDialog==null){
                     tiJIaoDialog=new TiJIaoDialog(LogingActivity.this);
+                    tiJIaoDialog.setCanceledOnTouchOutside(false);
                     if (!LogingActivity.this.isFinishing())
                         tiJIaoDialog.show();
                 }

@@ -189,14 +189,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <EditText
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:textSize="16sp"
-                android:text="暂无"
+                android:gravity="top"
+                android:textColorHint="@color/huise"
+                android:hint="点击编辑其它任务给该巡更员"
+                android:background="@drawable/zhongkong"
+                android:padding="8dp"
                 android:id="@+id/qita"
                 android:textColor="@color/blake"
-                android:layout_width="wrap_content"
+                android:minHeight="80dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <Button

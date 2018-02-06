@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,6 @@ import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
 import com.xiaojun.xungengguanliyuan.beans.FanHuiBean;
 import com.xiaojun.xungengguanliyuan.beans.MainBean;
-import com.xiaojun.xungengguanliyuan.cookies.CookiesManager;
 import com.xiaojun.xungengguanliyuan.dialog.TiJIaoDialog;
 import com.xiaojun.xungengguanliyuan.intface.ClickIntface2;
 import com.xiaojun.xungengguanliyuan.utils.GsonUtil;
@@ -39,29 +39,24 @@ import com.xiaojun.xungengguanliyuan.utils.SpringEffect;
 import com.xiaojun.xungengguanliyuan.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-import static org.greenrobot.eventbus.EventBus.TAG;
 
 public class DaKaActivity_ChaKan extends Activity {
     @BindView(R.id.yulan)
@@ -71,7 +66,7 @@ public class DaKaActivity_ChaKan extends Activity {
     @BindView(R.id.tijiao)
     Button tijiao;
     @BindView(R.id.qita)
-    TextView qita;
+    EditText qita;
     private ZhaoPianAdapter zhaoPianAdapter = null;
     private List<String> stringList;
     private RecyclerView recyclerView;
@@ -83,10 +78,10 @@ public class DaKaActivity_ChaKan extends Activity {
     private TiJIaoDialog tiJIaoDialog = null;
     private DengLuBean dengLuBean = null;
     private DengLuBeanDao dengLuBeanDao = null;
-    private int recordId, itemId, lineId, patrolId;
+    private int recordId;
     private String luxian = null, vedios = null, imgs = null;
     private boolean biaozhi = false;
-
+    private String qitas=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +93,8 @@ public class DaKaActivity_ChaKan extends Activity {
         output_directory = getIntent().getStringExtra(MediaRecorderActivity.OUTPUT_DIRECTORY);
         video_screenshot = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_SCREENSHOT);
         recordId = getIntent().getIntExtra("recordId", -1);
-        itemId = getIntent().getIntExtra("itemId", -1);
-        lineId = getIntent().getIntExtra("lineId", -1);
-        patrolId = getIntent().getIntExtra("patrolId", -1);
         luxian = getIntent().getStringExtra("luxian");
+        qitas=getIntent().getStringExtra("qita");
         imgs = getIntent().getStringExtra("imgs");
         vedios = getIntent().getStringExtra("vedios");
         if (imgs != null && !imgs.equals("")) {
@@ -109,14 +102,6 @@ public class DaKaActivity_ChaKan extends Activity {
             stringList.addAll(Arrays.asList(img));
         }
 
-
-        if (video_uri != null || output_directory != null && video_screenshot != null) {
-
-            EventBus.getDefault().post(new DataSynEvent(video_uri, output_directory, video_screenshot));
-            finish();
-        } else {
-            EventBus.getDefault().register(DaKaActivity_ChaKan.this);//订阅
-        }
 
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -159,41 +144,24 @@ public class DaKaActivity_ChaKan extends Activity {
             @Override
             public void run() {
 
-                link_P1(stringList);
+                link_P1();
             }
         });
 
-        tijiao.setVisibility(View.GONE);
         if (vedios != null && !vedios.equals("")) {
             yulan.setVisibility(View.VISIBLE);
         }
-
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
-    public void onDataSynEvent(DataSynEvent event) {
-        Log.d(TAG, event.toString());
-        dataSynEvent = event;
-        Glide.with(DaKaActivity_ChaKan.this)
-                .load(event.getVideo_screenshot())
-                //  .skipMemoryCache(true)
-                //  .diskCacheStrategy(DiskCacheStrategy.NONE)
-                //  .transform(new GlideCircleTransform(DengJiActivity.this,2, Color.parseColor("#ffffffff")))
-                .into(shiping_im);
-        shiping_im.setPadding(20, 20, 20, 20);
-        yulan.setVisibility(View.VISIBLE);
+        if (qitas!=null)
+        qita.setText(qitas);
     }
 
 
     @Override
     protected void onDestroy() {
-        if (EventBus.getDefault().isRegistered(DaKaActivity_ChaKan.this)) {
-            EventBus.getDefault().unregister(this);//解除订阅
-            if (biaozhi)
-                EventBus.getDefault().post(new MainBean(true, true));
-            else
-                EventBus.getDefault().post(new MainBean(true, false));
-        }
+        if (biaozhi)
+            EventBus.getDefault().post(new MainBean(true, true));
+        else
+            EventBus.getDefault().post(new MainBean(true, false));
         super.onDestroy();
     }
 
@@ -282,6 +250,7 @@ public class DaKaActivity_ChaKan extends Activity {
             public void run() {
                 if (tiJIaoDialog == null) {
                     tiJIaoDialog = new TiJIaoDialog(DaKaActivity_ChaKan.this);
+                    tiJIaoDialog.setCanceledOnTouchOutside(false);
                     if (!DaKaActivity_ChaKan.this.isFinishing())
                         tiJIaoDialog.show();
                 }
@@ -302,95 +271,28 @@ public class DaKaActivity_ChaKan extends Activity {
         });
     }
 
-    public static final int TIMEOUT = 1000 * 150;
 
-    private void link_P1(List<String> stringList) {
+    private void link_P1() {
         showDialog();
-        String nonce = Utils.getNonce();
-        String timestamp = Utils.getTimestamp();
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
-                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
-                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
-                .cookieJar(new CookiesManager())
-                .retryOnConnectionFailure(true)
-                .build();
-        ;
-        MultipartBody mBody;
-        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient okHttpClient= MyAppLaction.getOkHttpClient();
 
-        if (stringList.size() > 1) {
-            StringBuilder buffer = new StringBuilder();
-            int ss2 = stringList.size() - 1;
-            for (int i = 0; i < ss2; i++) {
-                File file1 = new File(stringList.get(i));
-                RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream"), file1);
-                //去掉前面的路径
-                builder.addFormDataPart("imageFile", stringList.get(i).substring(stringList.get(i).lastIndexOf("/") + 1, stringList.get(i).length()), fileBody1);
+        String nonce=Utils.getNonce();
+        String timestamp=Utils.getTimestamp();
 
-                if (i < ss2 - 1) {
-                    buffer.append(stringList.get(i).substring(stringList.get(i).lastIndexOf("/") + 1, stringList.get(i).length()));
-                    buffer.append(";");
-                } else {
-                    buffer.append(stringList.get(i).substring(stringList.get(i).lastIndexOf("/") + 1, stringList.get(i).length()));
-                }
-            }
-            builder.addFormDataPart("imgs", buffer.toString());
-            // Log.d("DaKaActivity", buffer.toString());
-        } else {
-            builder.addFormDataPart("imgs", "");
+//    /* form的分割线,自己定义 */
+//        String boundary = "xx--------------------------------------------------------------xx";
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("cmd","100");
+            jsonObject.put("recordId",recordId);
+            jsonObject.put("other",qita.getText().toString().trim());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        RequestBody body = RequestBody.create(JSON, jsonObject.toString());
 
-        if (dataSynEvent != null && dataSynEvent.getVideo_uri() != null) {
-
-            File file1 = new File(dataSynEvent.getVideo_uri());
-            RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream"), file1);
-            //去掉前面的路径
-            builder.addFormDataPart("vedioFile", dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
-                    .lastIndexOf("/") + 1, dataSynEvent.getVideo_uri().length()), fileBody1);
-            builder.addFormDataPart("vedios", dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
-                    .lastIndexOf("/") + 1, dataSynEvent.getVideo_uri().length()));
-
-        } else {
-            builder.addFormDataPart("vedios", "");
-        }
-        builder.addFormDataPart("cmd", "100");
-        builder.addFormDataPart("recordId", recordId + "");
-        builder.addFormDataPart("itemId", itemId + "");
-        builder.addFormDataPart("lineId", lineId + "");
-        builder.addFormDataPart("patrolId", patrolId + "");
-        builder.addFormDataPart("other", "");
-
-//        JSONObject tijiao = null;
-//        // JSONArray jsonArray=null;
-//        try {
-//            tijiao = new JSONObject();
-//            tijiao.put("recordId",0);
-//            tijiao.put("id",0);
-//            tijiao.put("accountId",dengLuBean.getUserId());
-//            tijiao.put("address",dizhi.getText().toString().trim());
-//            tijiao.put("companyId",dengLuBean.getCompanyId());
-//            tijiao.put("deviceId",shebeiID);
-//            tijiao.put("planId",itemsBeanList.get(p1).getId());
-//            tijiao.put("deviceNumber",bianhao);
-//            tijiao.put("faultTime",System.currentTimeMillis());
-//            tijiao.put("remark",guzhangEt.getText().toString().trim());
-//            tijiao.put("contactTel",dianhua.getText().toString());
-//            tijiao.put("faultImage",dengJiBean.getFaultImage());
-//
-//            // jsonArray=new JSONArray();
-//            // jsonArray.put(tijiao);
-//
-//            // jsonObject.put("cmd","100");
-//            // jsonObject.put("faults",jsonArray);
-//            //  Log.d("BaoZhangDengJiActivity", jsonObject.toString());
-//            //   jsonObject.put("password",jiami);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-
-        mBody = builder.build();
         //   Log.d("BaoZhangDengJiActivity", tijiao.toString());
 
 //         /* 第一个要上传的file */
@@ -411,10 +313,10 @@ public class DaKaActivity_ChaKan extends Activity {
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
                 .header("userId", dengLuBean.getUserId() + "")
-                .header("sign", Utils.encode("100" + nonce + timestamp
+                .header("sign", Utils.encode("100" +recordId+ nonce + timestamp
                         + dengLuBean.getUserId() + Utils.signaturePassword))
-                .post(mBody)
-                .url(dengLuBean.getZhuji() + "addPatrol.app");
+                .post(body)
+                .url(dengLuBean.getZhuji() + "addMission.app");
 
         // step 3：创建 Call 对象
         Call call = okHttpClient.newCall(requestBuilder.build());
@@ -445,9 +347,8 @@ public class DaKaActivity_ChaKan extends Activity {
                     Gson gson = new Gson();
                     FanHuiBean zhaoPianBean = gson.fromJson(jsonObject, FanHuiBean.class);
                     if (zhaoPianBean.getDtoResult() == 0) {
-
                         biaozhi = true;
-                        showMSG("打卡成功", 4);
+                        showMSG("提交成功", 4);
                         finish();
                     } else if (zhaoPianBean.getDtoResult() == -33) {
                         showMSG("登录过期,请重新登录", 4);
@@ -455,8 +356,8 @@ public class DaKaActivity_ChaKan extends Activity {
 
                 } catch (Exception e) {
                     dismissDialog();
-                    showMSG("上传图片出错", 4);
-                    Log.d("WebsocketPushMsg", e.getMessage());
+                    showMSG("返回数据出错", 4);
+                    Log.d("WebsocketPushMsg", e.getMessage()+"");
                 }
             }
         });
