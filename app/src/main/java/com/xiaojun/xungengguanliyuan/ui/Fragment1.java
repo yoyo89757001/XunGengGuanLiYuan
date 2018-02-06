@@ -86,8 +86,6 @@ public class Fragment1 extends Fragment {
         lRecyclerView = (LRecyclerView) view.findViewById(R.id.recyclerView);
         adapter = new F1Adapter(stringList);
 
-
-
         lRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
         WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         lRecyclerView.setLayoutManager(linearLayoutManager);
@@ -113,7 +111,9 @@ public class Fragment1 extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
 
-                startActivity(new Intent(getContext(),RenWuLiuChengActivity.class).putExtra("lineId",stringList.get(position).getLine_id()+""));
+                startActivity(new Intent(getContext(),RenWuLiuChengActivity.class).
+                        putExtra("lineId",stringList.get(position).getLine_id()+"").
+                        putExtra("luxian",stringList.get(position).getLine_name()));
 
             }
         });
@@ -138,7 +138,7 @@ public class Fragment1 extends Fragment {
         SpringEffect.doEffectSticky(view.findViewById(R.id.name_ll), new Runnable() {
             @Override
             public void run() {
-
+                if (nameString.size()>0){
                 final NameDialog dialog=new NameDialog(getContext(),nameString);
                 dialog.gengxin();
                 dialog.setOnPositiveListener(new View.OnClickListener() {
@@ -162,6 +162,9 @@ public class Fragment1 extends Fragment {
                 });
 
                 dialog.show();
+                }else {
+                    showMSG("暂无数据",4);
+                }
 
             }
         });

@@ -25,6 +25,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -40,7 +41,6 @@ import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
 import com.xiaojun.xungengguanliyuan.beans.FanHuiBean;
 import com.xiaojun.xungengguanliyuan.beans.MainBean;
-import com.xiaojun.xungengguanliyuan.beans.XuanGengDian;
 import com.xiaojun.xungengguanliyuan.cookies.CookiesManager;
 import com.xiaojun.xungengguanliyuan.dialog.TiJIaoDialog;
 import com.xiaojun.xungengguanliyuan.intface.ClickIntface2;
@@ -52,11 +52,10 @@ import com.xiaojun.xungengguanliyuan.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -80,6 +79,8 @@ import static org.greenrobot.eventbus.EventBus.TAG;
 public class DaKaActivity extends Activity implements ClickIntface2 {
     @BindView(R.id.yulan)
     Button yulan;
+    @BindView(R.id.renwu)
+    TextView renwu;
     private ZhaoPianAdapter zhaoPianAdapter = null;
     private List<String> stringList;
     private RecyclerView recyclerView;
@@ -88,27 +89,29 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     private String video_uri = null;
     private String output_directory = null;
     private String video_screenshot = null;
-    private DataSynEvent dataSynEvent=null;
-    private TiJIaoDialog tiJIaoDialog=null;
-    private DengLuBean dengLuBean=null;
-    private DengLuBeanDao dengLuBeanDao=null;
-    private int recordId,itemId,lineId,patrolId;
+    private DataSynEvent dataSynEvent = null;
+    private TiJIaoDialog tiJIaoDialog = null;
+    private DengLuBean dengLuBean = null;
+    private DengLuBeanDao dengLuBeanDao = null;
+    private int recordId, itemId, lineId, patrolId;
+    private String luxian=null;
+    private boolean biaozhi=false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dengLuBeanDao= MyAppLaction.myAppLaction.getDaoSession().getDengLuBeanDao();
-        dengLuBean=dengLuBeanDao.load(123456L);
+        dengLuBeanDao = MyAppLaction.myAppLaction.getDaoSession().getDengLuBeanDao();
+        dengLuBean = dengLuBeanDao.load(123456L);
         video_uri = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_URI);
         output_directory = getIntent().getStringExtra(MediaRecorderActivity.OUTPUT_DIRECTORY);
         video_screenshot = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_SCREENSHOT);
-        recordId=getIntent().getIntExtra("recordId",-1);
-        itemId=getIntent().getIntExtra("itemId",-1);
-        lineId=getIntent().getIntExtra("lineId",-1);
-        patrolId=getIntent().getIntExtra("patrolId",-1);
-
+        recordId = getIntent().getIntExtra("recordId", -1);
+        itemId = getIntent().getIntExtra("itemId", -1);
+        lineId = getIntent().getIntExtra("lineId", -1);
+        patrolId = getIntent().getIntExtra("patrolId", -1);
+        luxian=getIntent().getStringExtra("luxian");
         if (video_uri != null || output_directory != null && video_screenshot != null) {
 
             EventBus.getDefault().post(new DataSynEvent(video_uri, output_directory, video_screenshot));
@@ -144,6 +147,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         zhaoPianAdapter = new ZhaoPianAdapter(stringList);
         zhaoPianAdapter.setClickIntface(this);
         recyclerView.setAdapter(zhaoPianAdapter);
+        renwu.setText(luxian+"");
 
 
         SpringEffect.doEffectSticky(findViewById(R.id.shiping_im), new Runnable() {
@@ -168,7 +172,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         SpringEffect.doEffectSticky(findViewById(R.id.yulan), new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(DaKaActivity.this,VideoActivity.class).putExtra("url",dataSynEvent.getVideo_uri()));
+                startActivity(new Intent(DaKaActivity.this, VideoActivity.class).putExtra("url", dataSynEvent.getVideo_uri()));
 
             }
         });
@@ -186,7 +190,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(DataSynEvent event) {
         Log.d(TAG, event.toString());
-        dataSynEvent=event;
+        dataSynEvent = event;
         Glide.with(DaKaActivity.this)
                 .load(event.getVideo_screenshot())
                 //  .skipMemoryCache(true)
@@ -202,7 +206,10 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     protected void onDestroy() {
         if (EventBus.getDefault().isRegistered(DaKaActivity.this)) {
             EventBus.getDefault().unregister(this);//解除订阅
-            EventBus.getDefault().post(new MainBean(true,false));
+            if (biaozhi)
+                EventBus.getDefault().post(new MainBean(true, true));
+            else
+            EventBus.getDefault().post(new MainBean(true, false));
         }
         super.onDestroy();
     }
@@ -576,12 +583,12 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
 
     }
 
-    private void showDialog(){
+    private void showDialog() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (tiJIaoDialog==null){
-                    tiJIaoDialog=new TiJIaoDialog(DaKaActivity.this);
+                if (tiJIaoDialog == null) {
+                    tiJIaoDialog = new TiJIaoDialog(DaKaActivity.this);
                     if (!DaKaActivity.this.isFinishing())
                         tiJIaoDialog.show();
                 }
@@ -590,87 +597,74 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     }
 
 
-    private void dismissDialog(){
+    private void dismissDialog() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (tiJIaoDialog!=null && tiJIaoDialog.isShowing()){
+                if (tiJIaoDialog != null && tiJIaoDialog.isShowing()) {
                     tiJIaoDialog.dismiss();
-                    tiJIaoDialog=null;
+                    tiJIaoDialog = null;
                 }
             }
         });
     }
 
-    public static final int TIMEOUT = 1000 * 180;
+    public static final int TIMEOUT = 1000 * 150;
     private void link_P1(List<String> stringList) {
         showDialog();
-        String nonce=Utils.getNonce();
-        String timestamp=Utils.getTimestamp();
-
-        //final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
-        //http://192.168.2.4:8080/sign?cmd=getUnSignList&subjectId=jfgsdf
-        OkHttpClient okHttpClient= new OkHttpClient.Builder()
+        String nonce = Utils.getNonce();
+        String timestamp = Utils.getTimestamp();
+        OkHttpClient okHttpClient =new OkHttpClient.Builder()
                 .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                 .cookieJar(new CookiesManager())
                 .retryOnConnectionFailure(true)
-                .build();
+                .build();;
         MultipartBody mBody;
-        MultipartBody.Builder builder=new MultipartBody.Builder().setType(MultipartBody.FORM);
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
-
-
-        builder.addFormDataPart("cmd","100");
-        builder.addFormDataPart("recordId",recordId+"");
-        builder.addFormDataPart("itemId",itemId+"");
-        builder.addFormDataPart("lineId",lineId+"");
-        builder.addFormDataPart("patrolId",patrolId+"");
-        Log.d("DaKaActivity", "recordId:" + recordId);
-        Log.d("DaKaActivity", "itemId:" + itemId);
-        Log.d("DaKaActivity", "lineId:" + lineId);
-        Log.d("DaKaActivity", "patrolId:" + patrolId);
-
-        if (stringList.size()>1){
+        if (stringList.size() > 1) {
             StringBuilder buffer = new StringBuilder();
-            int ss2=stringList.size()-1;
-            for (int i=0;i<ss2;i++){
+            int ss2 = stringList.size() - 1;
+            for (int i = 0; i < ss2; i++) {
                 File file1 = new File(stringList.get(i));
-                RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream") , file1);
+                RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream"), file1);
                 //去掉前面的路径
-                builder. addFormDataPart("imageFile" , stringList.get(i).substring(stringList.get(i).lastIndexOf("/")+1,stringList.get(i).length()), fileBody1);
+                builder.addFormDataPart("imageFile", stringList.get(i).substring(stringList.get(i).lastIndexOf("/") + 1, stringList.get(i).length()), fileBody1);
 
-                if (i<ss2-1){
-                    buffer.append(stringList.get(i).substring(stringList.get(i).lastIndexOf("/")+1,stringList.get(i).length()));
+                if (i < ss2 - 1) {
+                    buffer.append(stringList.get(i).substring(stringList.get(i).lastIndexOf("/") + 1, stringList.get(i).length()));
                     buffer.append(";");
-                }else {
-                    buffer.append(stringList.get(i).substring(stringList.get(i).lastIndexOf("/")+1,stringList.get(i).length()));
+                } else {
+                    buffer.append(stringList.get(i).substring(stringList.get(i).lastIndexOf("/") + 1, stringList.get(i).length()));
                 }
             }
-            builder.addFormDataPart("imgs",buffer.toString());
-           Log.d("DaKaActivity", buffer.toString());
-        }else {
-            builder.addFormDataPart("imgs","");
+            builder.addFormDataPart("imgs", buffer.toString());
+           // Log.d("DaKaActivity", buffer.toString());
+        } else {
+            builder.addFormDataPart("imgs", "");
         }
-        Log.d("DaKaActivity", dataSynEvent.getVideo_uri()+"");
-        if (dataSynEvent.getVideo_uri()!=null){
+
+        if (dataSynEvent!=null && dataSynEvent.getVideo_uri() != null) {
 
             File file1 = new File(dataSynEvent.getVideo_uri());
-            RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream") , file1);
+            RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream"), file1);
             //去掉前面的路径
-            builder. addFormDataPart("imageFile" , dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
-                    .lastIndexOf("/")+1,dataSynEvent.getVideo_uri().length()), fileBody1);
-            builder.addFormDataPart("vedios",dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
-                    .lastIndexOf("/")+1,dataSynEvent.getVideo_uri().length()));
-            Log.d("DaKaActivity", dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
+            builder.addFormDataPart("vedioFile", dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
+                    .lastIndexOf("/") + 1, dataSynEvent.getVideo_uri().length()), fileBody1);
+            builder.addFormDataPart("vedios", dataSynEvent.getVideo_uri().substring(dataSynEvent.getVideo_uri()
                     .lastIndexOf("/") + 1, dataSynEvent.getVideo_uri().length()));
-        }else {
-            builder.addFormDataPart("vedios","");
+
+        } else {
+            builder.addFormDataPart("vedios", "");
         }
-
-        builder.addFormDataPart("other","");
-
+        builder.addFormDataPart("cmd", "100");
+        builder.addFormDataPart("recordId", recordId + "");
+        builder.addFormDataPart("itemId", itemId + "");
+        builder.addFormDataPart("lineId", lineId + "");
+        builder.addFormDataPart("patrolId", patrolId + "");
+        builder.addFormDataPart("other", "");
 
 //        JSONObject tijiao = null;
 //        // JSONArray jsonArray=null;
@@ -701,8 +695,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
 //        }
 //
 
-
-        mBody=builder.build();
+        mBody = builder.build();
         //   Log.d("BaoZhangDengJiActivity", tijiao.toString());
 
 //         /* 第一个要上传的file */
@@ -722,9 +715,9 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
                 // .header("Content-Type", "application/json")
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
-                .header("userId", dengLuBean.getUserId()+"")
-                .header("sign", Utils.encode("100"+nonce+timestamp
-                        +dengLuBean.getUserId()+Utils.signaturePassword))
+                .header("userId", dengLuBean.getUserId() + "")
+                .header("sign", Utils.encode("100" + nonce + timestamp
+                        + dengLuBean.getUserId() + Utils.signaturePassword))
                 .post(mBody)
                 .url(dengLuBean.getZhuji() + "addPatrol.app");
 
@@ -736,38 +729,38 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
             @Override
             public void onFailure(Call call, IOException e) {
                 dismissDialog();
-                showMSG("上传图片出错",4);
-                Log.d("AllConnects", "请求识别失败"+e.getMessage());
+                showMSG("上传图片出错", 4);
+                Log.d("AllConnects", "请求识别失败" + e.getMessage());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 dismissDialog();
-                Log.d("AllConnects", "请求识别成功"+call.request().toString());
+                Log.d("AllConnects", "请求识别成功" + call.request().toString());
                 //获得返回体
                 try {
 
                     ResponseBody body = response.body();
-                    String ss=body.string();
+                    String ss = body.string();
 
                     //  link_save(dengJiBean);
-                    Log.d("AllConnects", "aa   "+ss);
+                    Log.d("AllConnects", "aa   " + ss);
 
-                    JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
-                    Gson gson=new Gson();
-                    FanHuiBean zhaoPianBean=gson.fromJson(jsonObject,FanHuiBean.class);
-                    if (zhaoPianBean.getDtoResult()==0){
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    FanHuiBean zhaoPianBean = gson.fromJson(jsonObject, FanHuiBean.class);
+                    if (zhaoPianBean.getDtoResult() == 0) {
 
-
-                        showMSG("提交成功",4);
+                        biaozhi=true;
+                        showMSG("打卡成功", 4);
                         finish();
-                    }else if (zhaoPianBean.getDtoResult()==-33){
-                        showMSG("登录过期,请重新登录",4);
+                    } else if (zhaoPianBean.getDtoResult() == -33) {
+                        showMSG("登录过期,请重新登录", 4);
                     }
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     dismissDialog();
-                    showMSG("上传图片出错",4);
+                    showMSG("上传图片出错", 4);
                     Log.d("WebsocketPushMsg", e.getMessage());
                 }
             }

@@ -136,6 +136,33 @@ public class XuanGengDian {
         private int status;
         private int total_num;
         private int xungeng_id;
+        private String mac;
+        private String vedios;
+        private String imgs;
+
+        public String getVedios() {
+            return vedios;
+        }
+
+        public void setVedios(String vedios) {
+            this.vedios = vedios;
+        }
+
+        public String getImgs() {
+            return imgs;
+        }
+
+        public void setImgs(String imgs) {
+            this.imgs = imgs;
+        }
+
+        public String getMac() {
+            return mac;
+        }
+
+        public void setMac(String mac) {
+            this.mac = mac;
+        }
 
         public int getStatus() {
             return status;

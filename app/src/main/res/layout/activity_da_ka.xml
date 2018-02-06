@@ -38,7 +38,7 @@
         <ImageView
             android:layout_width="140dp"
             android:id="@+id/touxiang"
-            android:background="@color/write"
+            android:src="@mipmap/ic_launcher"
             android:layout_marginLeft="16dp"
             android:layout_height="120dp" />
 
@@ -60,6 +60,7 @@
             <TextView
                 android:text="路线"
                 android:textSize="16sp"
+                android:visibility="gone"
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/write"
                 android:layout_marginTop="8dp"
@@ -193,6 +194,7 @@
                 android:layout_marginLeft="16dp"
                 android:textSize="16sp"
                 android:text="暂无"
+                android:id="@+id/qita"
                 android:textColor="@color/blake"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

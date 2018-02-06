@@ -59,6 +59,7 @@
 
         <activity android:name=".ui.RenWuLiuChengActivity" />
         <activity android:name=".ui.DaKaActivity" />
+        <activity android:name=".ui.DaKaActivity_ChaKan" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -40,6 +40,7 @@
             android:layout_width="140dp"
             android:background="@color/write"
             android:id="@+id/touxiang"
+            android:src="@mipmap/ic_launcher"
             android:layout_marginLeft="16dp"
             android:layout_height="120dp" />
 
@@ -63,6 +64,7 @@
                 android:textSize="16sp"
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/write"
+                android:visibility="gone"
                 android:layout_marginTop="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
