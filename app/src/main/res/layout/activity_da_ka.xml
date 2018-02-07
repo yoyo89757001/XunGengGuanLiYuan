@@ -199,6 +199,7 @@
                 android:hint="点击编辑其它任务给该巡更员"
                 android:background="@drawable/zhongkong"
                 android:padding="8dp"
+                android:layout_marginBottom="10dp"
                 android:id="@+id/qita"
                 android:textColor="@color/blake"
                 android:minHeight="80dp"

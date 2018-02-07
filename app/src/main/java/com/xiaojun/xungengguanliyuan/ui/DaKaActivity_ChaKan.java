@@ -70,10 +70,10 @@ public class DaKaActivity_ChaKan extends Activity {
     private ZhaoPianAdapter zhaoPianAdapter = null;
     private List<String> stringList;
     private RecyclerView recyclerView;
-    private ImageView shiping_im;
-    private String video_uri = null;
-    private String output_directory = null;
-    private String video_screenshot = null;
+    //private ImageView shiping_im;
+    //private String video_uri = null;
+    //private String output_directory = null;
+  //  private String video_screenshot = null;
     private DataSynEvent dataSynEvent = null;
     private TiJIaoDialog tiJIaoDialog = null;
     private DengLuBean dengLuBean = null;
@@ -89,9 +89,9 @@ public class DaKaActivity_ChaKan extends Activity {
         stringList = new ArrayList<>();
         dengLuBeanDao = MyAppLaction.myAppLaction.getDaoSession().getDengLuBeanDao();
         dengLuBean = dengLuBeanDao.load(123456L);
-        video_uri = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_URI);
-        output_directory = getIntent().getStringExtra(MediaRecorderActivity.OUTPUT_DIRECTORY);
-        video_screenshot = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_SCREENSHOT);
+      //  video_uri = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_URI);
+        //output_directory = getIntent().getStringExtra(MediaRecorderActivity.OUTPUT_DIRECTORY);
+        //video_screenshot = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_SCREENSHOT);
         recordId = getIntent().getIntExtra("recordId", -1);
         luxian = getIntent().getStringExtra("luxian");
         qitas=getIntent().getStringExtra("qita");
@@ -117,7 +117,7 @@ public class DaKaActivity_ChaKan extends Activity {
         }
         setContentView(R.layout.activity_da_ka);
         ButterKnife.bind(this);
-        shiping_im = (ImageView) findViewById(R.id.shiping_im);
+       // shiping_im = (ImageView) findViewById(R.id.shiping_im);
 
 
         recyclerView = (RecyclerView) findViewById(R.id.recy);
@@ -153,6 +153,15 @@ public class DaKaActivity_ChaKan extends Activity {
         }
         if (qitas!=null)
         qita.setText(qitas);
+
+        if (dengLuBean.getStatus()!=0){
+            tijiao.setVisibility(View.GONE);
+            qita.setEnabled(false);
+            if (qitas!=null && !qitas.equals(""))
+                qita.setText(qitas);
+            else
+                qita.setText("暂无");
+        }
     }
 
 

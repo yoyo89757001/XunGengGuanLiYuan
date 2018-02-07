@@ -105,7 +105,7 @@ public class Fragment1 extends Fragment {
         //设置底部加载文字提示
         lRecyclerView.setFooterViewHint("拼命加载中","--------我是有底线的--------","网络不给力...");
         lRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallSpinFadeLoader);
-        //lRecyclerView.setLoadMoreEnabled(false);
+        lRecyclerView.setLoadMoreEnabled(false);
         lRecyclerView.setPullRefreshEnabled(true);
         lRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override

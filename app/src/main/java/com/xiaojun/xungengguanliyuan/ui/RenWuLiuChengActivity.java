@@ -140,7 +140,7 @@ public class RenWuLiuChengActivity extends Activity {
         lRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                if (dengLuBean.getStatus()==0){
+              //  if (dengLuBean.getStatus()==0){
                     startActivity(new Intent(RenWuLiuChengActivity.this, DaKaActivity_ChaKan.class)
                             .putExtra("recordId", stringList.get(position).getId())
                             .putExtra("itemId", stringList.get(position).getItem_id())
@@ -150,7 +150,7 @@ public class RenWuLiuChengActivity extends Activity {
                             .putExtra("imgs",stringList.get(position).getImgs())
                             .putExtra("vedios",stringList.get(position).getVedios())
                             .putExtra("qita",stringList.get(position).getOther()));
-                }
+              //  }
                 // startActivity(new Intent(RenWuLiuChengActivity.this,RenWuLiuChengActivity.class));
 
             }
