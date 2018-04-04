@@ -86,6 +86,7 @@ public class RenWuLiuChengActivity extends Activity {
     private ArrayList<Beacon> myBeacons = new ArrayList<Beacon>();
     private String luxian=null;
     private static boolean isShow = true;
+    private String schedule_id=null;
 
     @BindView(R.id.back)
     ImageView back;
@@ -114,6 +115,7 @@ public class RenWuLiuChengActivity extends Activity {
         ButterKnife.bind(this);
         lineId = getIntent().getStringExtra("lineId");
         luxian=getIntent().getStringExtra("luxian");
+        schedule_id=getIntent().getStringExtra("schedule_id");
         lRecyclerView = (LRecyclerView) findViewById(R.id.recyclerView);
         adapter = new RenWuLiuChengAdapter(stringList);
         lRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
@@ -344,6 +346,7 @@ public class RenWuLiuChengActivity extends Activity {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
+                .header("schedule_id", schedule_id==null?"":schedule_id)
                 .header("userId", dengLuBean.getUserId() + "")
                 .header("sign", Utils.encode("100" + lineId + nonce + timestamp
                         + dengLuBean.getUserId() + Utils.signaturePassword))
@@ -374,7 +377,7 @@ public class RenWuLiuChengActivity extends Activity {
 
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("InFoActivity", "ss" + ss);
+                    Log.d("InFoActivity", "patrols" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();

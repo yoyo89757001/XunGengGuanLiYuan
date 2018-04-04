@@ -115,7 +115,8 @@ public class XianLuBean {
          * total : 6
          * total_num : 0
          */
-
+        private String schedule_id;
+        private String schedule_tag;
         private int cmd_code;
         private long createTime;
         private int del_status;
@@ -136,6 +137,22 @@ public class XianLuBean {
         private int total;
         private int total_num;
         private int line_id;
+
+        public String getSchedule_id() {
+            return schedule_id;
+        }
+
+        public void setSchedule_id(String schedule_id) {
+            this.schedule_id = schedule_id;
+        }
+
+        public String getSchedule_tag() {
+            return schedule_tag;
+        }
+
+        public void setSchedule_tag(String schedule_tag) {
+            this.schedule_tag = schedule_tag;
+        }
 
         public int getLine_id() {
             return line_id;

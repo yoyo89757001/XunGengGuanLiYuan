@@ -27,6 +27,7 @@ android {
 
 dependencies {
 
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/ab-sdk-beta1.7.3.jar')
     compile 'com.sdsmdg.tastytoast:tastytoast:0.1.1'

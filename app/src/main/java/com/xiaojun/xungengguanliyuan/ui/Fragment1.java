@@ -113,7 +113,8 @@ public class Fragment1 extends Fragment {
 
                 startActivity(new Intent(getContext(),RenWuLiuChengActivity.class).
                         putExtra("lineId",stringList.get(position).getLine_id()+"").
-                        putExtra("luxian",stringList.get(position).getLine_name()));
+                        putExtra("luxian",stringList.get(position).getLine_name()).
+                        putExtra("schedule_id",stringList.get(position).getSchedule_id()));
 
             }
         });
@@ -257,7 +258,7 @@ public class Fragment1 extends Fragment {
 
                     ResponseBody body = response.body();
                     String ss=body.string().trim();
-                    Log.d("InFoActivity", "ss" + ss);
+                    Log.d("InFoActivity", "lins" + ss);
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
                    // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();
@@ -278,6 +279,7 @@ public class Fragment1 extends Fragment {
 
 
                     }else {
+
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

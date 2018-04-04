@@ -33,9 +33,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.KaiPingActivity"
-            android:theme="@style/NotitleTheme"
-            >
+        <activity
+            android:name=".ui.KaiPingActivity"
+            android:theme="@style/NotitleTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,7 +44,7 @@
         </activity>
         <activity android:name=".ui.MainActivity" />
         <activity android:name=".ui.WangJiMiMaActivity" />
-        <activity android:name=".ui.LogingActivity"/>
+        <activity android:name=".ui.LogingActivity" />
         <!-- 扫描beacon的服务 -->
         <service
             android:name="com.aprilbrother.aprilbrothersdk.service.BeaconService"
@@ -59,7 +59,9 @@
 
         <activity android:name=".ui.RenWuLiuChengActivity" />
         <activity android:name=".ui.DaKaActivity" />
-        <activity android:name=".ui.DaKaActivity_ChaKan" android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity
+            android:name=".ui.DaKaActivity_ChaKan"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -74,9 +76,11 @@
         <activity
             android:name="com.mabeijianxi.smallvideorecord2.MediaRecorderActivity"
             android:theme="@style/NotitleTheme" />
-        <activity android:name=".ui.VideoActivity"
-            android:theme="@style/NotitleTheme"
-            />
+        <activity
+            android:name=".ui.VideoActivity"
+            android:theme="@style/NotitleTheme" />
+        <activity android:name=".ui.XuanZeBaoBiaoActivity" />
+        <activity android:name=".ui.ChaKanBaoBiaoActivity"></activity>
     </application>
 
 </manifest>
