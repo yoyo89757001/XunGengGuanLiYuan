@@ -37,6 +37,7 @@ public class F1Adapter extends RecyclerView.Adapter<F1Adapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
         viewHolder.luxian.setText(datas.get(position).getLine_name());
+        viewHolder.luxian2.setText(datas.get(position).getSchedule_tag());
         viewHolder.heji.setText(datas.get(position).getTotal()+"");
         viewHolder.daiban.setText((datas.get(position).getTotal()-datas.get(position).getRecords())+"");
     }
@@ -47,12 +48,13 @@ public class F1Adapter extends RecyclerView.Adapter<F1Adapter.ViewHolder> {
     }
     //自定义的ViewHolder，持有每个Item的的所有界面元素
       class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView luxian ,heji,daiban;
+        private TextView luxian ,heji,daiban,luxian2;
 
 
         private ViewHolder(View view){
             super(view);
             luxian = (TextView) view.findViewById(R.id.renwu);
+            luxian2 = (TextView) view.findViewById(R.id.luxian);
             heji = (TextView) view.findViewById(R.id.heji);
             daiban = (TextView) view.findViewById(R.id.daiban);
 
