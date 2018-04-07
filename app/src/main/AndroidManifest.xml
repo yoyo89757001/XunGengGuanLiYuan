@@ -80,7 +80,11 @@
             android:name=".ui.VideoActivity"
             android:theme="@style/NotitleTheme" />
         <activity android:name=".ui.XuanZeBaoBiaoActivity" />
-        <activity android:name=".ui.ChaKanBaoBiaoActivity"></activity>
+        <activity android:name=".ui.ChaKanBaoBiaoActivity"/>
+        <activity
+            android:name=".ui.DatePickActivity"
+            android:theme="@style/MyDialogStyleBottom" />
+
     </application>
 
 </manifest>

@@ -30,6 +30,10 @@
     </RelativeLayout>
 
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_marginLeft="16dp"
@@ -54,6 +58,9 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:minWidth="100dp"
+                android:id="@+id/name"
+                android:background="@null"
+                android:paddingRight="8dp"
                 android:hint="请输入巡更员姓名"
                 android:textColorHint="@color/huise"
                 android:textColor="@color/huise"
@@ -77,7 +84,7 @@
                 android:layout_centerVertical="true"
                 android:textColor="@color/blake"
                 android:textSize="16sp"
-                android:text="巡更员姓名"
+                android:text="巡更项目名"
                 android:layout_marginLeft="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -85,7 +92,10 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:minWidth="100dp"
-                android:hint="请输入巡更员姓名"
+                android:hint="请输入巡更项目名"
+                android:background="@null"
+                android:id="@+id/xiangmuming"
+                android:paddingRight="8dp"
                 android:textColorHint="@color/huise"
                 android:textColor="@color/huise"
                 android:gravity="right|center_vertical"
@@ -108,7 +118,7 @@
                 android:layout_centerVertical="true"
                 android:textColor="@color/blake"
                 android:textSize="16sp"
-                android:text="巡更员姓名"
+                android:text="巡更编号"
                 android:layout_marginLeft="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -116,7 +126,10 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:minWidth="100dp"
-                android:hint="请输入巡更员姓名"
+                android:hint="请输入巡更编号"
+                android:background="@null"
+                android:paddingRight="8dp"
+                android:id="@+id/bianhao"
                 android:textColorHint="@color/huise"
                 android:textColor="@color/huise"
                 android:gravity="right|center_vertical"
@@ -148,17 +161,30 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:minWidth="100dp"
-                android:layout_toRightOf="@+id/aa11"
                 android:hint="请选择时间"
                 android:id="@+id/shijian1"
-                android:layout_marginLeft="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:background="@drawable/zidonghuoqu_hui"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textColorHighlight="@color/huise"
                 android:textColorHint="@color/huise"
                 android:textColor="@color/blake"
                 android:gravity="center"
                 android:layout_height="match_parent" />
+
+        </RelativeLayout>
+        <View
+            android:background="@color/huise"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_height="0.8dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
 
             <TextView
                 android:layout_centerVertical="true"
@@ -166,8 +192,6 @@
                 android:textSize="16sp"
                 android:text="结束时间"
                 android:id="@+id/aa22"
-                android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@+id/shijian2"
                 android:layout_marginLeft="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -177,9 +201,11 @@
                 android:minWidth="100dp"
                 android:hint="请选择时间"
                 android:id="@+id/shijian2"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/zidonghuoqu_hui"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:layout_marginRight="16dp"
                 android:textColorHighlight="@color/huise"
                 android:textColorHint="@color/huise"
@@ -195,85 +221,96 @@
             android:layout_marginRight="16dp"
             android:layout_height="0.8dp"/>
 
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="60dp">-->
+            <!--<TextView-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:textColor="@color/blake"-->
+                <!--android:textSize="16sp"-->
+                <!--android:text="开始时间"-->
+                <!--android:id="@+id/aa"-->
+                <!--android:layout_marginLeft="16dp"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
-            <TextView
-                android:layout_centerVertical="true"
-                android:textColor="@color/blake"
-                android:textSize="16sp"
-                android:text="开始时间"
-                android:id="@+id/aa"
-                android:layout_marginLeft="16dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:minWidth="100dp"-->
+               <!--android:layout_alignParentRight="true"-->
+                <!--android:hint="请选择时间"-->
+                <!--android:id="@+id/shijianduan1"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:background="@drawable/zidonghuoqu_hui"-->
+                <!--android:textSize="16sp"-->
+                <!--android:textColorHighlight="@color/huise"-->
+                <!--android:textColorHint="@color/huise"-->
+                <!--android:textColor="@color/blake"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_height="match_parent" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:minWidth="100dp"
-                android:layout_toRightOf="@+id/aa"
-                android:hint="请选择时间"
-                android:id="@+id/shijianduan1"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/zidonghuoqu_hui"
-                android:textSize="14sp"
-                android:textColorHighlight="@color/huise"
-                android:textColorHint="@color/huise"
-                android:textColor="@color/blake"
-                android:gravity="center"
-                android:layout_height="match_parent" />
 
-            <TextView
-                android:layout_centerVertical="true"
-                android:textColor="@color/blake"
-                android:textSize="16sp"
-                android:text="结束时间"
-                android:id="@+id/aa2"
-                android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@+id/shijianduan2"
-                android:layout_marginLeft="16dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+        <!--</RelativeLayout>-->
+        <!--<View-->
+            <!--android:background="@color/huise"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_marginLeft="16dp"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:layout_height="0.8dp"/>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:minWidth="100dp"
-                android:hint="请选择时间"
-                android:id="@+id/shijianduan2"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/zidonghuoqu_hui"
-                android:textSize="14sp"
-                android:layout_marginRight="16dp"
-                android:textColorHighlight="@color/huise"
-                android:textColorHint="@color/huise"
-                android:textColor="@color/blake"
-                android:gravity="center"
-                android:layout_height="match_parent" />
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="60dp">-->
 
-        </RelativeLayout>
-        <View
-            android:background="@color/huise"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_height="0.8dp"/>
+            <!--<TextView-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:textColor="@color/blake"-->
+                <!--android:textSize="16sp"-->
+                <!--android:text="结束时间"-->
+                <!--android:id="@+id/aa2"-->
+                <!--android:layout_marginLeft="16dp"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:minWidth="100dp"-->
+                <!--android:hint="请选择时间"-->
+               <!--android:layout_alignParentRight="true"-->
+                <!--android:id="@+id/shijianduan2"-->
+                <!--android:background="@drawable/zidonghuoqu_hui"-->
+                <!--android:textSize="16sp"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:textColorHighlight="@color/huise"-->
+                <!--android:textColorHint="@color/huise"-->
+                <!--android:textColor="@color/blake"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_height="match_parent" />-->
+
+        <!--</RelativeLayout>-->
+        <!--<View-->
+            <!--android:background="@color/huise"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_marginLeft="16dp"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:layout_height="0.8dp"/>-->
+
 
 
         <Button
             android:id="@+id/xiayibu"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:background="@drawable/jiaohu3"
+            android:background="@drawable/jiaohu4"
             android:layout_marginLeft="40dp"
             android:text="下一步,查看报表"
             android:textColor="@color/write"
             android:textSize="18sp"
             android:layout_marginRight="40dp"
             android:layout_width="match_parent"
-            android:layout_height="64dp" />
+            android:layout_height="56dp" />
 
     </LinearLayout>
-
+    </ScrollView>
 
 </LinearLayout>

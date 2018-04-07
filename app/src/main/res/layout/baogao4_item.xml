@@ -1,48 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="2dp"
+    android:background="@drawable/zidonghuoqu10"
     android:layout_width="match_parent"
-    android:background="@drawable/bg"
-    android:layout_height="match_parent"
-    tools:context="com.xiaojun.xungengguanliyuan.ui.ChaKanBaoBiaoActivity">
-
-    <RelativeLayout
-        android:layout_marginTop="28dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:src="@drawable/ic_back"
-            android:layout_marginLeft="16dp"
-            android:id="@+id/back"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:text="巡更线路报表详情"
-            android:layout_centerHorizontal="true"
-            android:textSize="24sp"
-            android:textColor="@color/write"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/zidonghuoqu16"
         android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="编号"
+            android:id="@+id/bianhao"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginTop="14dp"
@@ -54,20 +28,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="项目名"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
-            android:gravity="center"
-            android:textColor="@color/blake"
-            android:textSize="14sp"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="人员"
+            android:id="@+id/xiangmuming"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginTop="14dp"
@@ -80,7 +41,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="开始\n时间"
+            android:id="@+id/name"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginTop="14dp"
@@ -93,7 +54,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="结束\n时间"
+            android:id="@+id/kaishishijian"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginTop="14dp"
@@ -106,7 +67,21 @@
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="打卡\n状态"
+            android:id="@+id/jieshushijian"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:gravity="center"
+            android:textColor="@color/blake"
+            android:textSize="14sp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/zhuangtai"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginTop="14dp"
@@ -118,15 +93,4 @@
 
 
     </LinearLayout>
-
-    <com.github.jdsjlzx.recyclerview.LRecyclerView
-        android:id="@+id/recyclerView"
-
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-
 </LinearLayout>
-

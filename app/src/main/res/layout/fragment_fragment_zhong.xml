@@ -18,13 +18,64 @@
             android:layout_height="wrap_content" />
 
 
-        <com.github.jdsjlzx.recyclerview.LRecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_marginTop="10dp"
+        <LinearLayout
+            android:background="@drawable/zidonghuoqu10"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content">
+
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/blake"
+                    android:text="巡更情况统计表"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:paddingTop="22dp"
+                    android:id="@+id/b1"
+                    android:paddingBottom="22dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <View
+                    android:layout_width="match_parent"
+                    android:background="@color/huise"
+                    android:layout_height="0.8dp"/>
+
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/blake"
+                    android:text="排班巡更点明细表"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:paddingTop="22dp"
+                    android:id="@+id/b2"
+                    android:paddingBottom="22dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <View
+                    android:layout_width="match_parent"
+                    android:background="@color/huise"
+                    android:layout_height="0.8dp"/>
+
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/blake"
+                    android:text="人员巡更明细表"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/b3"
+                    android:layout_marginRight="10dp"
+                    android:paddingTop="22dp"
+                    android:paddingBottom="22dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+
+        </LinearLayout>
+
+
 
 
 </LinearLayout>
