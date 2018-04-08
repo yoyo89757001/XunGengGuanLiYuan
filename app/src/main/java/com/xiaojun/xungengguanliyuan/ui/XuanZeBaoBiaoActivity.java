@@ -79,6 +79,7 @@ public class XuanZeBaoBiaoActivity extends Activity {
                 break;
             case R.id.xiayibu:
             xiayibu.setEnabled(false);
+            if (type==1){
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -101,8 +102,33 @@ public class XuanZeBaoBiaoActivity extends Activity {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable("chuan",bean);
 
-                startActivity(new Intent(XuanZeBaoBiaoActivity.this,ChaKanBaoBiaoActivity.class).putExtras(bundle));
+                startActivity(new Intent(XuanZeBaoBiaoActivity.this,ChaKanBaoBiaoActivity1.class).putExtras(bundle));
+            }else {
 
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SystemClock.sleep(2000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                xiayibu.setEnabled(true);
+                            }
+                        });
+                    }
+                }).start();
+                ChuanBean bean = new ChuanBean();
+                bean.setBianhao(bianhao.getText().toString().trim());
+                bean.setName(name.getText().toString().trim());
+                bean.setType(type);
+                bean.setXiangmuMing(xiangmuming.getText().toString().trim());
+                bean.setShijian1(shijian1.getText().toString().trim());
+                bean.setShijian2(shijian2.getText().toString().trim());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("chuan", bean);
+
+                startActivity(new Intent(XuanZeBaoBiaoActivity.this, ChaKanBaoBiaoActivity.class).putExtras(bundle));
+            }
                 break;
         }
     }
