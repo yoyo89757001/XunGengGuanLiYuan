@@ -62,6 +62,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -83,6 +84,8 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     TextView renwu;
     @BindView(R.id.qita)
     EditText qita;
+    @BindView(R.id.back)
+    ImageView back;
     private ZhaoPianAdapter zhaoPianAdapter = null;
     private List<String> stringList;
     private RecyclerView recyclerView;
@@ -98,7 +101,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
     private int recordId, itemId, lineId, patrolId;
     private String luxian = null;
     private boolean biaozhi = false;
-    private String qitas=null;
+    private String qitas = null;
 
 
     @Override
@@ -115,7 +118,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         lineId = getIntent().getIntExtra("lineId", -1);
         patrolId = getIntent().getIntExtra("patrolId", -1);
         luxian = getIntent().getStringExtra("luxian");
-        qitas=getIntent().getStringExtra("qita");
+        qitas = getIntent().getStringExtra("qita");
         if (video_uri != null || output_directory != null && video_screenshot != null) {
 
             EventBus.getDefault().post(new DataSynEvent(video_uri, output_directory, video_screenshot));
@@ -190,8 +193,8 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         });
 
         qita.setEnabled(false);
-        if (qitas!=null && !qitas.equals(""))
-        qita.setText(qitas);
+        if (qitas != null && !qitas.equals(""))
+            qita.setText(qitas);
         else
             qita.setText("暂无");
 
@@ -333,6 +336,11 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
             }
         }
 
+    }
+
+    @OnClick(R.id.back)
+    public void onViewClicked() {
+        finish();
     }
 
 

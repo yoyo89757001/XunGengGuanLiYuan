@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.mabeijianxi.smallvideorecord2.MediaRecorderActivity;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.xiaojun.xungengguanliyuan.MyAppLaction;
 import com.xiaojun.xungengguanliyuan.R;
@@ -46,8 +45,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -67,13 +68,15 @@ public class DaKaActivity_ChaKan extends Activity {
     Button tijiao;
     @BindView(R.id.qita)
     EditText qita;
+    @BindView(R.id.back)
+    ImageView back;
     private ZhaoPianAdapter zhaoPianAdapter = null;
     private List<String> stringList;
     private RecyclerView recyclerView;
     //private ImageView shiping_im;
     //private String video_uri = null;
     //private String output_directory = null;
-  //  private String video_screenshot = null;
+    //  private String video_screenshot = null;
     private DataSynEvent dataSynEvent = null;
     private TiJIaoDialog tiJIaoDialog = null;
     private DengLuBean dengLuBean = null;
@@ -81,7 +84,7 @@ public class DaKaActivity_ChaKan extends Activity {
     private int recordId;
     private String luxian = null, vedios = null, imgs = null;
     private boolean biaozhi = false;
-    private String qitas=null;
+    private String qitas = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,12 +92,12 @@ public class DaKaActivity_ChaKan extends Activity {
         stringList = new ArrayList<>();
         dengLuBeanDao = MyAppLaction.myAppLaction.getDaoSession().getDengLuBeanDao();
         dengLuBean = dengLuBeanDao.load(123456L);
-      //  video_uri = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_URI);
+        //  video_uri = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_URI);
         //output_directory = getIntent().getStringExtra(MediaRecorderActivity.OUTPUT_DIRECTORY);
         //video_screenshot = getIntent().getStringExtra(MediaRecorderActivity.VIDEO_SCREENSHOT);
         recordId = getIntent().getIntExtra("recordId", -1);
         luxian = getIntent().getStringExtra("luxian");
-        qitas=getIntent().getStringExtra("qita");
+        qitas = getIntent().getStringExtra("qita");
         imgs = getIntent().getStringExtra("imgs");
         vedios = getIntent().getStringExtra("vedios");
         if (imgs != null && !imgs.equals("")) {
@@ -117,7 +120,7 @@ public class DaKaActivity_ChaKan extends Activity {
         }
         setContentView(R.layout.activity_da_ka);
         ButterKnife.bind(this);
-       // shiping_im = (ImageView) findViewById(R.id.shiping_im);
+        // shiping_im = (ImageView) findViewById(R.id.shiping_im);
 
 
         recyclerView = (RecyclerView) findViewById(R.id.recy);
@@ -151,13 +154,13 @@ public class DaKaActivity_ChaKan extends Activity {
         if (vedios != null && !vedios.equals("")) {
             yulan.setVisibility(View.VISIBLE);
         }
-        if (qitas!=null)
-        qita.setText(qitas);
+        if (qitas != null)
+            qita.setText(qitas);
 
-        if (dengLuBean.getStatus()!=0){
+        if (dengLuBean.getStatus() != 0) {
             tijiao.setVisibility(View.GONE);
             qita.setEnabled(false);
-            if (qitas!=null && !qitas.equals(""))
+            if (qitas != null && !qitas.equals(""))
                 qita.setText(qitas);
             else
                 qita.setText("暂无");
@@ -172,6 +175,11 @@ public class DaKaActivity_ChaKan extends Activity {
         else
             EventBus.getDefault().post(new MainBean(true, false));
         super.onDestroy();
+    }
+
+    @OnClick(R.id.back)
+    public void onViewClicked() {
+        finish();
     }
 
 
@@ -283,19 +291,19 @@ public class DaKaActivity_ChaKan extends Activity {
 
     private void link_P1() {
         showDialog();
-        final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient okHttpClient= MyAppLaction.getOkHttpClient();
+        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient okHttpClient = MyAppLaction.getOkHttpClient();
 
-        String nonce=Utils.getNonce();
-        String timestamp=Utils.getTimestamp();
+        String nonce = Utils.getNonce();
+        String timestamp = Utils.getTimestamp();
 
 //    /* form的分割线,自己定义 */
 //        String boundary = "xx--------------------------------------------------------------xx";
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("cmd","100");
-            jsonObject.put("recordId",recordId);
-            jsonObject.put("other",qita.getText().toString().trim());
+            jsonObject.put("cmd", "100");
+            jsonObject.put("recordId", recordId);
+            jsonObject.put("other", qita.getText().toString().trim());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -322,7 +330,7 @@ public class DaKaActivity_ChaKan extends Activity {
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
                 .header("userId", dengLuBean.getUserId() + "")
-                .header("sign", Utils.encode("100" +recordId+ nonce + timestamp
+                .header("sign", Utils.encode("100" + recordId + nonce + timestamp
                         + dengLuBean.getUserId() + Utils.signaturePassword))
                 .post(body)
                 .url(dengLuBean.getZhuji() + "addMission.app");
@@ -366,7 +374,7 @@ public class DaKaActivity_ChaKan extends Activity {
                 } catch (Exception e) {
                     dismissDialog();
                     showMSG("返回数据出错", 4);
-                    Log.d("WebsocketPushMsg", e.getMessage()+"");
+                    Log.d("WebsocketPushMsg", e.getMessage() + "");
                 }
             }
         });
