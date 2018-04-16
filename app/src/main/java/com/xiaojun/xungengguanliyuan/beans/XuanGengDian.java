@@ -140,6 +140,24 @@ public class XuanGengDian {
         private String vedios;
         private String imgs;
         private String other;
+        private long s_time;
+        private long e_time;
+
+        public long getS_time() {
+            return s_time;
+        }
+
+        public void setS_time(long s_time) {
+            this.s_time = s_time;
+        }
+
+        public long getE_time() {
+            return e_time;
+        }
+
+        public void setE_time(long e_time) {
+            this.e_time = e_time;
+        }
 
         public String getOther() {
             return other;

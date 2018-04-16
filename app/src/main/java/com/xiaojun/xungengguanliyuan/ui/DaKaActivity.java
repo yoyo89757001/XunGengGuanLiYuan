@@ -687,34 +687,7 @@ public class DaKaActivity extends Activity implements ClickIntface2 {
         builder.addFormDataPart("patrolId", patrolId + "");
         builder.addFormDataPart("other", "");
 
-//        JSONObject tijiao = null;
-//        // JSONArray jsonArray=null;
-//        try {
-//            tijiao = new JSONObject();
-//            tijiao.put("recordId",0);
-//            tijiao.put("id",0);
-//            tijiao.put("accountId",dengLuBean.getUserId());
-//            tijiao.put("address",dizhi.getText().toString().trim());
-//            tijiao.put("companyId",dengLuBean.getCompanyId());
-//            tijiao.put("deviceId",shebeiID);
-//            tijiao.put("planId",itemsBeanList.get(p1).getId());
-//            tijiao.put("deviceNumber",bianhao);
-//            tijiao.put("faultTime",System.currentTimeMillis());
-//            tijiao.put("remark",guzhangEt.getText().toString().trim());
-//            tijiao.put("contactTel",dianhua.getText().toString());
-//            tijiao.put("faultImage",dengJiBean.getFaultImage());
-//
-//            // jsonArray=new JSONArray();
-//            // jsonArray.put(tijiao);
-//
-//            // jsonObject.put("cmd","100");
-//            // jsonObject.put("faults",jsonArray);
-//            //  Log.d("BaoZhangDengJiActivity", jsonObject.toString());
-//            //   jsonObject.put("password",jiami);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
+
 
         mBody = builder.build();
         //   Log.d("BaoZhangDengJiActivity", tijiao.toString());

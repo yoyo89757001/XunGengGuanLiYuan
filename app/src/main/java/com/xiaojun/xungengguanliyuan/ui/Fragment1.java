@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.github.jdsjlzx.ItemDecoration.DividerDecoration;
 import com.github.jdsjlzx.interfaces.OnItemClickListener;
 import com.github.jdsjlzx.interfaces.OnLoadMoreListener;
@@ -28,22 +27,21 @@ import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.adapter.F1Adapter;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
+import com.xiaojun.xungengguanliyuan.beans.NameBeans;
 import com.xiaojun.xungengguanliyuan.beans.RenBean;
 import com.xiaojun.xungengguanliyuan.beans.XianLuBean;
 import com.xiaojun.xungengguanliyuan.dialog.NameDialog;
+import com.xiaojun.xungengguanliyuan.dialog.NameDialog2;
 import com.xiaojun.xungengguanliyuan.dialog.TiJIaoDialog;
 import com.xiaojun.xungengguanliyuan.utils.GsonUtil;
 import com.xiaojun.xungengguanliyuan.utils.SpringEffect;
 import com.xiaojun.xungengguanliyuan.utils.Utils;
 import com.xiaojun.xungengguanliyuan.views.WrapContentLinearLayoutManager;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -62,14 +60,16 @@ public class Fragment1 extends Fragment {
     private LRecyclerView lRecyclerView;
     private LRecyclerViewAdapter lRecyclerViewAdapter;
     private List<XianLuBean.ObjectsBean> stringList=new ArrayList<>();
+    private List<NameBeans> stringList22=new ArrayList<>();
     private F1Adapter adapter;
-    private TextView name;
+    private TextView name,name22;
     private List<RenBean.ObjectsBean> nameString=new ArrayList<>();
     private DengLuBean dengLuBean=null;
     private DengLuBeanDao dengLuBeanDao=null;
     private TiJIaoDialog tiJIaoDialog=null;
     private int p=0;
-
+    private int p22=1;
+    private int p3=0;
 
     public Fragment1() {
         // Required empty public constructor
@@ -83,8 +83,13 @@ public class Fragment1 extends Fragment {
         dengLuBean=dengLuBeanDao.load(123456L);
         View view = inflater.inflate(R.layout.fragment_fragment1, container, false);
         name= (TextView) view.findViewById(R.id.name);
+        name22= (TextView) view.findViewById(R.id.name22);
         lRecyclerView = (LRecyclerView) view.findViewById(R.id.recyclerView);
         adapter = new F1Adapter(stringList);
+        stringList22.add(new NameBeans("进行中",true,1));
+        stringList22.add(new NameBeans("已完成",false,2));
+        stringList22.add(new NameBeans("未开始",false,3));
+        stringList22.add(new NameBeans("未打卡",false,4));
 
         lRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
         WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -112,6 +117,7 @@ public class Fragment1 extends Fragment {
             public void onItemClick(View view, int position) {
 
                 startActivity(new Intent(getContext(),RenWuLiuChengActivity.class).
+                        putExtra("userid",p+"").
                         putExtra("lineId",stringList.get(position).getLine_id()+"").
                         putExtra("luxian",stringList.get(position).getLine_name()).
                         putExtra("schedule_id",stringList.get(position).getSchedule_id()));
@@ -126,7 +132,7 @@ public class Fragment1 extends Fragment {
                 //下拉刷新
                  //  Log.d("Fragment144444", "下拉刷新");
                 if (dengLuBean.getStatus()!=0){
-                    link_lines(dengLuBean.getUserId());
+                    link_lines(dengLuBean.getUserId(),p22);
                 }else {
                     link_ren();
                 }
@@ -152,11 +158,9 @@ public class Fragment1 extends Fragment {
                     public void onClick(View v) {
                         if (dialog.getData()!=null){
                             name.setText(dialog.getData().getName());
-                            if (stringList.size()>0)
-                                stringList.clear();
-                            adapter.notifyDataSetChanged();
                             p=dialog.getData().getId();
-                            link_lines(p);
+                            link_lines(p,p22);
+
                         }
                         dialog.dismiss();
 
@@ -170,6 +174,40 @@ public class Fragment1 extends Fragment {
                 });
 
                 dialog.show();
+                }else {
+                    showMSG("暂无数据",4);
+                }
+
+            }
+        });
+
+        SpringEffect.doEffectSticky(view.findViewById(R.id.name_22), new Runnable() {
+            @Override
+            public void run() {
+                if (stringList22.size()>0){
+                    final NameDialog2 dialog=new NameDialog2(getContext(),stringList22);
+                    dialog.gengxin();
+                    dialog.setOnPositiveListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (dialog.getData()!=null){
+                                name22.setText(dialog.getData().getSs());
+                                p22=dialog.getData().getP2();
+                                link_lines(p,p22);
+
+                            }
+                            dialog.dismiss();
+
+                        }
+                    });
+                    dialog.setCancelListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
                 }else {
                     showMSG("暂无数据",4);
                 }
@@ -196,7 +234,7 @@ public class Fragment1 extends Fragment {
 
 
 
-    private void link_lines(long idid) {
+    private void link_lines(long idid,int p22) {
       //  showDialog();
 
         final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
@@ -212,6 +250,7 @@ public class Fragment1 extends Fragment {
         try {
             jsonObject.put("cmd","101");
             jsonObject.put("itemId","0");
+            jsonObject.put("status",p22+"");
             jsonObject.put("userId",idid);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -386,7 +425,11 @@ public class Fragment1 extends Fragment {
                             if (nameString.size()>0)
                                 nameString.clear();
                             nameString.addAll(zhaoPianBean.getObjects());
-                            link_lines(p==0?zhaoPianBean.getObjects().get(0).getId():p);
+                                if (p==0){
+                                   p= zhaoPianBean.getObjects().get(0).getId();
+                                }
+                            link_lines(p,p22);
+
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

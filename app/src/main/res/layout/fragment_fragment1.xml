@@ -33,35 +33,74 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:id="@+id/name_ll"
-        android:gravity="center_vertical"
-        android:background="@drawable/zidonghuoqu_lvse33"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/name"
-            android:textSize="16sp"
-            android:textColor="@color/write"
-            android:text="请选择"
-            android:paddingTop="4dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="4dp"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:id="@+id/name_ll"
+            android:gravity="center_vertical"
+            android:background="@drawable/zidonghuoqu_lvse33"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/name"
+                android:textSize="16sp"
+                android:textColor="@color/write"
+                android:text="请选择"
+                android:paddingTop="4dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <ImageView
-            android:src="@drawable/ic_arrows"
-            android:layout_marginRight="10dp"
+            <ImageView
+                android:src="@drawable/ic_arrows"
+                android:layout_marginRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginRight="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="16dp"
+            android:id="@+id/name_22"
+            android:gravity="center_vertical"
+            android:background="@drawable/zidonghuoqu_lvse33"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/name22"
+                android:textSize="16sp"
+                android:textColor="@color/write"
+                android:text="进行中"
+                android:paddingTop="4dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:src="@drawable/ic_arrows"
+                android:layout_marginRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
 
-    </LinearLayout>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
 
     <com.github.jdsjlzx.recyclerview.LRecyclerView
         android:id="@+id/recyclerView"

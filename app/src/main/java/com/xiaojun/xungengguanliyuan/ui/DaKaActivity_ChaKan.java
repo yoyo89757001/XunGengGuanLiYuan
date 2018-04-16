@@ -212,7 +212,7 @@ public class DaKaActivity_ChaKan extends Activity {
 //                    clickIntface.BackId(viewHolder.itemView);
 //                }
 //            });
-            Log.d("VideoActivity", dengLuBean.getZhuji() + "patrolImage" + "/" + datas.get(position));
+          //  Log.d("VideoActivity", dengLuBean.getZhuji() + "patrolImage" + "/" + datas.get(position));
             Glide.with(DaKaActivity_ChaKan.this)
                     .load(dengLuBean.getZhuji().replaceAll("api/", "") + "patrolImages" + "/" + datas.get(position))
                     //  .skipMemoryCache(true)

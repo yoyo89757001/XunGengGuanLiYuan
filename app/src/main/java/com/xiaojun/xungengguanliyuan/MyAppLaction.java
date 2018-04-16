@@ -33,7 +33,7 @@ import okhttp3.OkHttpClient;
 
 public class MyAppLaction extends Application {
     // 超时时间
-    public static final int TIMEOUT = 1000 * 30;
+    public static final int TIMEOUT = 1000 * 60;
     public DaoMaster mDaoMaster;
     public DaoSession mDaoSession;
     public static MyAppLaction myAppLaction;

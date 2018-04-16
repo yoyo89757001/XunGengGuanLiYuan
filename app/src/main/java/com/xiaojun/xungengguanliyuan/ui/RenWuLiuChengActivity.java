@@ -87,6 +87,7 @@ public class RenWuLiuChengActivity extends Activity {
     private String luxian=null;
     private static boolean isShow = true;
     private String schedule_id=null;
+    private String userid=null;
 
     @BindView(R.id.back)
     ImageView back;
@@ -115,6 +116,7 @@ public class RenWuLiuChengActivity extends Activity {
         ButterKnife.bind(this);
         lineId = getIntent().getStringExtra("lineId");
         luxian=getIntent().getStringExtra("luxian");
+        userid=getIntent().getStringExtra("userid");
         schedule_id=getIntent().getStringExtra("schedule_id");
         lRecyclerView = (LRecyclerView) findViewById(R.id.recyclerView);
         adapter = new RenWuLiuChengAdapter(stringList);
@@ -336,8 +338,10 @@ public class RenWuLiuChengActivity extends Activity {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("cmd", "100");
+            jsonObject.put("userId", userid==null?"":userid);
             jsonObject.put("lineId", lineId);
-            //  jsonObject.put("password",jiami);
+            jsonObject.put("schedule_id",schedule_id==null?"":schedule_id);
+          //  Log.d("RenWuLiuChengActivity", schedule_id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -346,7 +350,7 @@ public class RenWuLiuChengActivity extends Activity {
         Request.Builder requestBuilder = new Request.Builder()
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
-                .header("schedule_id", schedule_id==null?"":schedule_id)
+               // .header("schedule_id", schedule_id==null?"":schedule_id)
                 .header("userId", dengLuBean.getUserId() + "")
                 .header("sign", Utils.encode("100" + lineId + nonce + timestamp
                         + dengLuBean.getUserId() + Utils.signaturePassword))
