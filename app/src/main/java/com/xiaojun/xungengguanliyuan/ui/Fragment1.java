@@ -115,12 +115,19 @@ public class Fragment1 extends Fragment {
         lRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                if (dengLuBean.getStatus()!=0){
+                    startActivity(new Intent(getContext(),RenWuLiuChengActivity.class).
+                            putExtra("userid",dengLuBean.getUserId()+"").
+                            putExtra("lineId",stringList.get(position).getLine_id()+"").
+                            putExtra("luxian",stringList.get(position).getLine_name()).
+                            putExtra("schedule_id",stringList.get(position).getSchedule_id()));
+                }else {
                 startActivity(new Intent(getContext(),RenWuLiuChengActivity.class).
                         putExtra("userid",p+"").
                         putExtra("lineId",stringList.get(position).getLine_id()+"").
                         putExtra("luxian",stringList.get(position).getLine_name()).
                         putExtra("schedule_id",stringList.get(position).getSchedule_id()));
+                }
 
             }
         });
