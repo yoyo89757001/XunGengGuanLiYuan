@@ -48,7 +48,7 @@ public class RenWuLiuChengAdapter extends RecyclerView.Adapter<RenWuLiuChengAdap
                         viewHolder.bianhao1.setTextColor(Color.parseColor("#00C196"));
                         viewHolder.zhuangtai.setText("未开始");
                         viewHolder.zhuangtai.setBackgroundResource(R.drawable.shixin_lv);
-                    }else if (System.currentTimeMillis()>datas.get(position).getS_time() && System.currentTimeMillis()<datas.get(position).getS_time()){
+                    }else if (System.currentTimeMillis()>datas.get(position).getS_time() && System.currentTimeMillis()<datas.get(position).getE_time()){
 
                         viewHolder.ll_bg.setBackgroundResource(R.drawable.zidonghuoqu10);
                         viewHolder.bianhao1.setBackgroundResource(R.drawable.yuan_lv);

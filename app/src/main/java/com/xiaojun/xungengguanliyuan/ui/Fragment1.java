@@ -138,6 +138,9 @@ public class Fragment1 extends Fragment {
             public void onRefresh() {
                 //下拉刷新
                  //  Log.d("Fragment144444", "下拉刷新");
+
+                Log.d("Fragment1", "System.currentTimeMillis()-1523898000000:" + (System.currentTimeMillis() - 1523898000000L));
+                Log.d("Fragment1", "System.currentTimeMillis()-1523898000000:" + (System.currentTimeMillis() - 1523977200000L));
                 if (dengLuBean.getStatus()!=0){
                     link_lines(dengLuBean.getUserId(),p22);
                 }else {
@@ -200,7 +203,10 @@ public class Fragment1 extends Fragment {
                             if (dialog.getData()!=null){
                                 name22.setText(dialog.getData().getSs());
                                 p22=dialog.getData().getP2();
-                                link_lines(p,p22);
+                                if (dengLuBean.getStatus()!=0)
+                                link_lines(dengLuBean.getUserId(),p22);
+                                else
+                                    link_lines(p,p22);
 
                             }
                             dialog.dismiss();

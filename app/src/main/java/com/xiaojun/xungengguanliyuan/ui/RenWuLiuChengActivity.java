@@ -182,7 +182,8 @@ public class RenWuLiuChengActivity extends Activity {
                             if (size > 0) {
                                 for (int i = 0; i < size; i++) {
                                  //   Log.d("RenWuLiuChengActivity", "ggg");
-                                      if (stringList.get(i).getStatus()==1 && stringList.get(i).getMac().equals(myBeacons.get(0).getMacAddress().replaceAll(":", ""))) {
+                                      if (stringList.get(i).getStatus()==1 && stringList.get(i).getMac().equals(myBeacons.get(0).getMacAddress().replaceAll(":", ""))
+                                              && System.currentTimeMillis()>stringList.get(i).getS_time() && System.currentTimeMillis()<stringList.get(i).getE_time()) {
                                         isShow = false;
                                         startActivity(new Intent(RenWuLiuChengActivity.this, DaKaActivity.class)
                                                 .putExtra("recordId", stringList.get(i).getId())
