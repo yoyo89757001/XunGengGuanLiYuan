@@ -339,10 +339,12 @@ public class RenWuLiuChengActivity extends Activity {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("cmd", "100");
-            jsonObject.put("userId", userid==null?"":userid);
+           // jsonObject.put("userId", userid==null?"":userid);
             jsonObject.put("lineId", lineId);
             jsonObject.put("schedule_id",schedule_id==null?"":schedule_id);
-          //  Log.d("RenWuLiuChengActivity", schedule_id);
+//            Log.d("RenWuLiuChengActivity", "schedule_id"+schedule_id);
+//            Log.d("RenWuLiuChengActivity", "lineId"+lineId);
+//            Log.d("RenWuLiuChengActivity", "userid"+userid);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -389,7 +391,23 @@ public class RenWuLiuChengActivity extends Activity {
                     XuanGengDian zhaoPianBean = gson.fromJson(jsonObject, XuanGengDian.class);
                     if (jsonObject.get("dtoResult").getAsString().equals("0")) {
                         //  showMSG(jsonObject.get("dtoDesc").getAsString(),4);
-                        stringList.addAll(zhaoPianBean.getObjects());
+                        if (true){
+                            //需要按顺序打卡
+                            List<XuanGengDian.ObjectsBean> dians=zhaoPianBean.getObjects();
+                            int size=dians.size();
+                            for (int i=0;i<size;i++){
+                                if (dians.get(i).getStatus()==1){
+                                    stringList.add(dians.get(i));
+                                    break;
+                                }
+
+                            }
+
+                        }else {
+                            //不需要按顺序打卡
+                            stringList.addAll(zhaoPianBean.getObjects());
+                        }
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
