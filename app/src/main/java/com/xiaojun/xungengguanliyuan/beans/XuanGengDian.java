@@ -116,7 +116,18 @@ public class XuanGengDian {
          * xungeng_id : 10000008
          */
 
+
+        private int is_sequence;
         private String address;
+
+        public int getIs_sequence() {
+            return is_sequence;
+        }
+
+        public void setIs_sequence(int is_sequence) {
+            this.is_sequence = is_sequence;
+        }
+
         private int cmd_code;
         private long createTime;
         private long create_time;

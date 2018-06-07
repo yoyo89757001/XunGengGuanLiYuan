@@ -37,6 +37,7 @@ import com.xiaojun.xungengguanliyuan.adapter.RenWuLiuChengAdapter;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
 import com.xiaojun.xungengguanliyuan.beans.MainBean;
+import com.xiaojun.xungengguanliyuan.beans.RenBean;
 import com.xiaojun.xungengguanliyuan.beans.XuanGengDian;
 import com.xiaojun.xungengguanliyuan.dialog.TiJIaoDialog;
 import com.xiaojun.xungengguanliyuan.utils.ComparatorBeaconByRssi;
@@ -391,7 +392,13 @@ public class RenWuLiuChengActivity extends Activity {
                     XuanGengDian zhaoPianBean = gson.fromJson(jsonObject, XuanGengDian.class);
                     if (jsonObject.get("dtoResult").getAsString().equals("0")) {
                         //  showMSG(jsonObject.get("dtoDesc").getAsString(),4);
-                        if (true){
+                      //  is_sequence  0不排序 1排序
+                        int pp=0;
+                        if (zhaoPianBean.getObjects().get(0).getIs_sequence()==1){
+                            pp=1;
+                        }
+
+                        if (pp==1){
                             //需要按顺序打卡
                             List<XuanGengDian.ObjectsBean> dians=zhaoPianBean.getObjects();
                             int size=dians.size();
@@ -412,6 +419,10 @@ public class RenWuLiuChengActivity extends Activity {
                             @Override
                             public void run() {
                                 adapter.notifyDataSetChanged();
+                                if (stringList.size()==0){
+                                    TastyToast.makeText(RenWuLiuChengActivity.this,"没有符合打卡要求的数据",TastyToast.LENGTH_LONG,TastyToast.INFO).show();
+                                }
+
                             }
                         });
 
