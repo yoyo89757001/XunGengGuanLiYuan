@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.xiaojun.xungengguanliyuan.MyAppLaction;
 import com.xiaojun.xungengguanliyuan.R;
+import com.xiaojun.xungengguanliyuan.adapter.ChaKanAdapter0;
 import com.xiaojun.xungengguanliyuan.adapter.ChaKanAdapter2;
 import com.xiaojun.xungengguanliyuan.beans.BaoBiao2;
 import com.xiaojun.xungengguanliyuan.beans.ChuanBean;
@@ -54,13 +55,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class ChaKanBaoBiaoActivity1 extends Activity {
+public class ChaKanBaoBiaoActivity0 extends Activity {
     @BindView(R.id.back)
     ImageView back;
     private LRecyclerView lRecyclerView;
     private LRecyclerViewAdapter lRecyclerViewAdapter;
     private List<BaoBiao2.ObjectsBean> stringList = new ArrayList<>();
-    private ChaKanAdapter2 adapter;
+    private ChaKanAdapter0 adapter;
     private DengLuBean dengLuBean = null;
     private DengLuBeanDao dengLuBeanDao = null;
     private TiJIaoDialog tiJIaoDialog = null;
@@ -82,21 +83,21 @@ public class ChaKanBaoBiaoActivity1 extends Activity {
             window.setStatusBarColor(Color.TRANSPARENT);
             // window.setNavigationBarColor(Color.TRANSPARENT);
         }
-        setContentView(R.layout.activity_cha_kan_bao_biao1);
+        setContentView(R.layout.activity_cha_kan_bao_biao0);
         ButterKnife.bind(this);
         dengLuBeanDao = MyAppLaction.myAppLaction.getDaoSession().getDengLuBeanDao();
         dengLuBean = dengLuBeanDao.load(123456L);
         lRecyclerView = (LRecyclerView) findViewById(R.id.recyclerView);
-        adapter = new ChaKanAdapter2(stringList);
+        adapter = new ChaKanAdapter0(stringList);
         bean = (ChuanBean) getIntent().getSerializableExtra("chuan");
-          Log.d("ChaKanBaoBiaoActivity", bean.toString()+"111111");
+          Log.d("ChaKanBaoBiaoActivity0", bean.toString()+"000000000000");
 
         lRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
-        WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(ChaKanBaoBiaoActivity1.this, LinearLayoutManager.VERTICAL, false);
+        WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(ChaKanBaoBiaoActivity0.this, LinearLayoutManager.VERTICAL, false);
         lRecyclerView.setLayoutManager(linearLayoutManager);
         lRecyclerView.setAdapter(lRecyclerViewAdapter);
 
-        final DividerDecoration divider = new DividerDecoration.Builder(ChaKanBaoBiaoActivity1.this)
+        final DividerDecoration divider = new DividerDecoration.Builder(ChaKanBaoBiaoActivity0.this)
                 .setHeight(2.0f)
                 .setPadding(2.0f)
                 .setColorResource(R.color.transparent)
@@ -167,7 +168,7 @@ public class ChaKanBaoBiaoActivity1 extends Activity {
             @Override
             public void run() {
 
-                Toast tastyToast = TastyToast.makeText(ChaKanBaoBiaoActivity1.this, s, TastyToast.LENGTH_LONG, i);
+                Toast tastyToast = TastyToast.makeText(ChaKanBaoBiaoActivity0.this, s, TastyToast.LENGTH_LONG, i);
                 tastyToast.setGravity(Gravity.CENTER, 0, 0);
                 tastyToast.show();
 
@@ -200,20 +201,20 @@ public class ChaKanBaoBiaoActivity1 extends Activity {
             }
 
             jsonObject.put("cmd", "100");
-            jsonObject.put("name", bean.getName());
             jsonObject.put("item_name", bean.getXiangmuMing());
-            jsonObject.put("schedule_id", bean.getBianhao());
             jsonObject.put("str_btime", riqi1);
             jsonObject.put("str_etime", riqi2);
-            jsonObject.put("s_hour", duan1);
-            jsonObject.put("e_hour", duan2);
+//            jsonObject.put("s_hour", duan1);
+//            jsonObject.put("e_hour", duan2);
             jsonObject.put("page_num", page);
             jsonObject.put("page_size", "30");
+            Log.d("ChaKanBaoBiaoActivity0", riqi1+"FFFFF");
+            Log.d("ChaKanBaoBiaoActivity0", riqi2+"FFFFF");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         RequestBody body = RequestBody.create(JSON, jsonObject.toString());
-        Log.d("ChaKanBaoBiaoActivity1", jsonObject.toString());
+        Log.d("ChaKanBaoBiaoActivity0", jsonObject.toString());
         Request.Builder requestBuilder = new Request.Builder()
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
@@ -221,7 +222,7 @@ public class ChaKanBaoBiaoActivity1 extends Activity {
                 .header("sign", Utils.encode("100" + nonce + timestamp
                         + dengLuBean.getUserId() + Utils.signaturePassword))
                 .post(body)
-                .url(dengLuBean.getZhuji() + "queryReportSummary.app");
+                .url(dengLuBean.getZhuji() + "queryReportSummaryItem.app");
 //        Log.d("LogingActivity", "100"+zhanghao+jiami+nonce+timestamp
 //                +"0"+ Utils.signaturePassword);
         // step 3：创建 Call 对象
@@ -252,7 +253,7 @@ public class ChaKanBaoBiaoActivity1 extends Activity {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("InFoActivity", "chakanbaogao2" + ss);
+                    Log.d("InFoActivity", "chakanbaogao0" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();

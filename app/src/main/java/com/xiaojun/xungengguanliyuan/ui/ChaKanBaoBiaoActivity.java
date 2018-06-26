@@ -89,7 +89,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
         lRecyclerView = (LRecyclerView) findViewById(R.id.recyclerView);
         adapter = new ChaKanAdapter(stringList);
         bean = (ChuanBean) getIntent().getSerializableExtra("chuan");
-        //  Log.d("ChaKanBaoBiaoActivity", bean.toString());
+          Log.d("ChaKanBaoBiaoActivity", bean.toString()+"kkkkkkkk");
 
         lRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
         WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(ChaKanBaoBiaoActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -208,7 +208,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
 
     private void link_lines1(final int page) {
         //  showDialog();
-
+        Log.d("ChaKanBaoBiaoActivity", "ffffffffffffffffff");
         final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         OkHttpClient okHttpClient = MyAppLaction.getOkHttpClient();
 
@@ -231,6 +231,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
             }
 
             jsonObject.put("cmd", "100");
+            jsonObject.put("name", bean.getName());
             jsonObject.put("item_name", bean.getXiangmuMing());
             jsonObject.put("schedule_id", bean.getBianhao());
             jsonObject.put("str_btime", riqi1);
@@ -243,7 +244,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
             e.printStackTrace();
         }
         RequestBody body = RequestBody.create(JSON, jsonObject.toString());
-
+        Log.d("ChaKanBaoBiaoActivity", jsonObject.toString()+"[][][]");
         Request.Builder requestBuilder = new Request.Builder()
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
@@ -282,7 +283,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("InFoActivity", "chakanbaogao2" + ss);
+                    Log.d("InFoActivity", "chakanbaogao1" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();
@@ -380,6 +381,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
             }
 
             jsonObject.put("cmd", "100");
+            jsonObject.put("name", bean.getName());
             jsonObject.put("item_name", bean.getXiangmuMing());
             jsonObject.put("schedule_id", bean.getBianhao());
             jsonObject.put("str_btime", riqi1);
@@ -392,7 +394,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
             e.printStackTrace();
         }
         RequestBody body = RequestBody.create(JSON, jsonObject.toString());
-
+        Log.d("ChaKanBaoBiaoActivity", jsonObject.toString());
         Request.Builder requestBuilder = new Request.Builder()
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
@@ -432,7 +434,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("InFoActivity", "chakanbaogao2" + ss);
+                    Log.d("InFoActivity", "chakanbaogao1" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();
@@ -531,6 +533,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
             }
 
             jsonObject.put("cmd", "100");
+            jsonObject.put("name", bean.getName());
             jsonObject.put("item_name", bean.getXiangmuMing());
             jsonObject.put("user_name", bean.getName());
             jsonObject.put("schedule_id", bean.getBianhao());
@@ -544,7 +547,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
             e.printStackTrace();
         }
         RequestBody body = RequestBody.create(JSON, jsonObject.toString());
-
+        Log.d("ChaKanBaoBiaoActivity", jsonObject.toString());
         Request.Builder requestBuilder = new Request.Builder()
                 .header("nonce", nonce)
                 .header("timestamp", timestamp)
@@ -584,7 +587,7 @@ public class ChaKanBaoBiaoActivity extends Activity {
                 try {
                     ResponseBody body = response.body();
                     String ss = body.string().trim();
-                    Log.d("InFoActivity", "chakanbaogao2" + ss);
+                    Log.d("InFoActivity", "chakanbaogao1" + ss);
                     JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson = new Gson();
                     // JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();

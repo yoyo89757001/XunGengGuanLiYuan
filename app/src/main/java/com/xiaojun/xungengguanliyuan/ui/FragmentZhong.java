@@ -21,7 +21,8 @@ import butterknife.Unbinder;
  */
 public class FragmentZhong extends Fragment {
 
-
+    @BindView(R.id.b0)
+    TextView b0;
     @BindView(R.id.b1)
     TextView b1;
     @BindView(R.id.b2)
@@ -50,9 +51,12 @@ public class FragmentZhong extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.b1, R.id.b2, R.id.b3})
+    @OnClick({R.id.b0,R.id.b1, R.id.b2, R.id.b3})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.b0:
+                startActivity(new Intent(getActivity(),XuanZeBaoBiaoActivity.class).putExtra("type",0));
+                break;
             case R.id.b1:
                 startActivity(new Intent(getActivity(),XuanZeBaoBiaoActivity.class).putExtra("type",1));
                 break;

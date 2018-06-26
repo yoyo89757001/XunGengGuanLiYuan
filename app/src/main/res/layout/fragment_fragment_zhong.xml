@@ -30,6 +30,22 @@
                 <TextView
                     android:textSize="16sp"
                     android:textColor="@color/blake"
+                    android:text="项目巡更情况统计表"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:paddingTop="22dp"
+                    android:id="@+id/b0"
+                    android:paddingBottom="22dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <View
+                    android:layout_width="match_parent"
+                    android:background="@color/huise"
+                    android:layout_height="0.8dp"/>
+
+                <TextView
+                    android:textSize="16sp"
+                    android:textColor="@color/blake"
                     android:text="巡更情况统计表"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
