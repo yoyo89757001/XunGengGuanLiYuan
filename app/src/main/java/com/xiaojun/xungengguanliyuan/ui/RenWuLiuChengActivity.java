@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -36,9 +37,11 @@ import com.xiaojun.xungengguanliyuan.R;
 import com.xiaojun.xungengguanliyuan.adapter.RenWuLiuChengAdapter;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
+import com.xiaojun.xungengguanliyuan.beans.FanHuiBean;
 import com.xiaojun.xungengguanliyuan.beans.MainBean;
 import com.xiaojun.xungengguanliyuan.beans.RenBean;
 import com.xiaojun.xungengguanliyuan.beans.XuanGengDian;
+import com.xiaojun.xungengguanliyuan.cookies.CookiesManager;
 import com.xiaojun.xungengguanliyuan.dialog.TiJIaoDialog;
 import com.xiaojun.xungengguanliyuan.utils.ComparatorBeaconByRssi;
 import com.xiaojun.xungengguanliyuan.utils.GsonUtil;
@@ -51,10 +54,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,6 +67,7 @@ import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -174,7 +180,7 @@ public class RenWuLiuChengActivity extends Activity {
                 Collections.sort(myBeacons, com);
                 if (myBeacons.size() > 0) {
                   //  Log.d("RenWuLiuChengActivity", "jinlai0");
-                    if (myBeacons.get(0).getDistance() <= 5.0f) {
+                    if (myBeacons.get(0).getDistance() <= 2.6f) {
                        // Log.d("RenWuLiuChengActivity", "jinlai1");
                         if (isShow) {
                           //  Log.d("RenWuLiuChengActivity", "jinlai2");
@@ -186,13 +192,14 @@ public class RenWuLiuChengActivity extends Activity {
                                       if (stringList.get(i).getStatus()==1 && stringList.get(i).getMac().equals(myBeacons.get(0).getMacAddress().replaceAll(":", ""))
                                               && System.currentTimeMillis()>stringList.get(i).getS_time() && System.currentTimeMillis()<stringList.get(i).getE_time()) {
                                         isShow = false;
-                                        startActivity(new Intent(RenWuLiuChengActivity.this, DaKaActivity.class)
-                                                .putExtra("recordId", stringList.get(i).getId())
-                                                .putExtra("itemId", stringList.get(i).getItem_id())
-                                                .putExtra("lineId", stringList.get(i).getLine_id())
-                                                .putExtra("patrolId", stringList.get(i).getXungeng_id())
-                                                .putExtra("qita",stringList.get(i).getOther())
-                                                .putExtra("luxian",luxian));
+                                          link_P1(stringList.get(i).getId()+"",stringList.get(i).getItem_id()+"",stringList.get(i).getXungeng_id()+"",stringList.get(i).getLine_id()+"");
+//                                        startActivity(new Intent(RenWuLiuChengActivity.this, DaKaActivity.class)
+//                                                .putExtra("recordId", stringList.get(i).getId())
+//                                                .putExtra("itemId", stringList.get(i).getItem_id())
+//                                                .putExtra("lineId", stringList.get(i).getLine_id())
+//                                                .putExtra("patrolId", stringList.get(i).getXungeng_id())
+//                                                .putExtra("qita",stringList.get(i).getOther())
+//                                                .putExtra("luxian",luxian));
 
                                         break;
                                     }else {
@@ -253,18 +260,128 @@ public class RenWuLiuChengActivity extends Activity {
     @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
     public void onDataSynEvent(MainBean bean) {
         Log.d("kkk", "收到" + bean.isIstrue());
-        if (bean.isIstrue()) {
-            isShow = true;
-        }
         if (bean.isShuaXin()) {
             if (stringList.size()>0)
                 stringList.clear();
             link_save();
         }
+        if (bean.isIstrue()) {
+            isShow = true;
+        }
+
 
     }
 
+    public static final int TIMEOUT = 1000 * 150;
 
+    private void link_P1(String recordId,String itemId,String patrolId,String lineId) {
+        showDialog();
+        String nonce = Utils.getNonce();
+        String timestamp = Utils.getTimestamp();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .cookieJar(new CookiesManager())
+                .retryOnConnectionFailure(true)
+                .build();
+        ;
+        MultipartBody mBody;
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+
+        builder.addFormDataPart("imgs", "");
+        builder.addFormDataPart("vedios", "");
+        builder.addFormDataPart("cmd", "100");
+        builder.addFormDataPart("recordId", recordId );
+        builder.addFormDataPart("itemId", itemId );
+        builder.addFormDataPart("lineId", lineId );
+        builder.addFormDataPart("patrolId", patrolId );
+        builder.addFormDataPart("other", "");
+
+
+
+        mBody = builder.build();
+        //   Log.d("BaoZhangDengJiActivity", tijiao.toString());
+
+//         /* 第一个要上传的file */
+//       File file1 = new File(filename1);
+//        RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream") , file1);
+//        final String file1Name = System.currentTimeMillis()+"testFile1.jpg";
+//
+//
+//        MultipartBody mBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+//            /* 底下是上传了两个文件 */
+//                .addFormDataPart("file" , file1Name , fileBody1)
+//                  /* 上传一个普通的String参数 */
+//                //  .addFormDataPart("subject_id" , subject_id+"")
+//                //  .addFormDataPart("image_2" , file2Name , fileBody2)
+//                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                // .header("Content-Type", "application/json")
+                .header("nonce", nonce)
+                .header("timestamp", timestamp)
+                .header("userId", dengLuBean.getUserId() + "")
+                .header("sign", Utils.encode("100" + nonce + timestamp
+                        + dengLuBean.getUserId() + Utils.signaturePassword))
+                .post(mBody)
+                .url(dengLuBean.getZhuji() + "addPatrol.app");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                dismissDialog();
+                showMSG("网络错误", 4);
+                Log.d("AllConnects", "请求识别失败" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                dismissDialog();
+                Log.d("AllConnects", "请求识别成功" + call.request().toString());
+                //获得返回体
+                try {
+
+                    ResponseBody body = response.body();
+                    String ss = body.string();
+
+                    //  link_save(dengJiBean);
+                    Log.d("AllConnects", "aa   " + ss);
+
+                    JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+                    Gson gson = new Gson();
+                    FanHuiBean zhaoPianBean = gson.fromJson(jsonObject, FanHuiBean.class);
+                    if (zhaoPianBean.getDtoResult() == 0) {
+
+
+                        showMSG("打卡成功", 4);
+                        //播放语音
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                MediaPlayer mMediaPlayer;
+                                mMediaPlayer=MediaPlayer.create(RenWuLiuChengActivity.this, R.raw.daka);
+                                mMediaPlayer.start();
+                            }
+                        });
+                        EventBus.getDefault().post(new MainBean(true, true));
+
+                    } else if (zhaoPianBean.getDtoResult() == -33) {
+                        showMSG("登录过期,请重新登录", 4);
+                    }
+
+                } catch (Exception e) {
+                    dismissDialog();
+                    showMSG("上传图片出错", 4);
+                    Log.d("WebsocketPushMsg", e.getMessage());
+                }
+            }
+        });
+
+    }
 
 
     @Override

@@ -3,6 +3,7 @@ package com.xiaojun.xungengguanliyuan.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -78,7 +79,9 @@ public class LogingActivity extends Activity {
         setContentView(R.layout.activity_loging);
         ButterKnife.bind(this);
 
-
+//        MediaPlayer mMediaPlayer;
+//        mMediaPlayer=MediaPlayer.create(LogingActivity.this, R.raw.daka);
+//        mMediaPlayer.start();
 
 
 
