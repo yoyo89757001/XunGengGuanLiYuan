@@ -139,8 +139,8 @@ public class Fragment1 extends Fragment {
                 //下拉刷新
                  //  Log.d("Fragment144444", "下拉刷新");
 
-                Log.d("Fragment1", "System.currentTimeMillis()-1523898000000:" + (System.currentTimeMillis() - 1523898000000L));
-                Log.d("Fragment1", "System.currentTimeMillis()-1523898000000:" + (System.currentTimeMillis() - 1523977200000L));
+              //  Log.d("Fragment1", "System.currentTimeMillis()-1523898000000:" + (System.currentTimeMillis() - 1523898000000L));
+            //    Log.d("Fragment1", "System.currentTimeMillis()-1523898000000:" + (System.currentTimeMillis() - 1523977200000L));
                 if (dengLuBean.getStatus()!=0){
                     link_lines(dengLuBean.getUserId(),p22);
                 }else {

@@ -299,7 +299,6 @@ public class RenWuLiuChengActivity extends Activity {
         builder.addFormDataPart("other", "");
 
 
-
         mBody = builder.build();
         //   Log.d("BaoZhangDengJiActivity", tijiao.toString());
 
@@ -355,7 +354,6 @@ public class RenWuLiuChengActivity extends Activity {
                     Gson gson = new Gson();
                     FanHuiBean zhaoPianBean = gson.fromJson(jsonObject, FanHuiBean.class);
                     if (zhaoPianBean.getDtoResult() == 0) {
-
 
                         showMSG("打卡成功", 4);
                         //播放语音
