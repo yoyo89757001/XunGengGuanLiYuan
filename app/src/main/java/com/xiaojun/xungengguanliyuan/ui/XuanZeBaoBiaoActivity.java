@@ -30,6 +30,7 @@ import com.xiaojun.xungengguanliyuan.adapter.PopupWindowAdapter;
 import com.xiaojun.xungengguanliyuan.beans.ChuanBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBean;
 import com.xiaojun.xungengguanliyuan.beans.DengLuBeanDao;
+import com.xiaojun.xungengguanliyuan.beans.XiangMuNameBean;
 import com.xiaojun.xungengguanliyuan.utils.GsonUtil;
 import com.xiaojun.xungengguanliyuan.utils.Utils;
 
@@ -107,6 +108,7 @@ public class XuanZeBaoBiaoActivity extends Activity {
         }
         dengLuBeanDao = MyAppLaction.myAppLaction.getDaoSession().getDengLuBeanDao();
         dengLuBean = dengLuBeanDao.load(123456L);
+        adapterss = new PopupWindowAdapter(XuanZeBaoBiaoActivity.this, stringList);
         if (dengLuBean!=null){
             link_save();
         }
@@ -208,7 +210,7 @@ public class XuanZeBaoBiaoActivity extends Activity {
                     View contentView = LayoutInflater.from(XuanZeBaoBiaoActivity.this).inflate(R.layout.xiangmu_po_item, null);
 
                     ListView listView = (ListView) contentView.findViewById(R.id.dddddd);
-                    adapterss = new PopupWindowAdapter(XuanZeBaoBiaoActivity.this, stringList);
+
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -217,7 +219,7 @@ public class XuanZeBaoBiaoActivity extends Activity {
                         }
                     });
                     listView.setAdapter(adapterss);
-                    popupWindow = new PopupWindow(contentView, 200, 400);
+                    popupWindow = new PopupWindow(contentView, 400, 400);
                     popupWindow.setFocusable(true);//获取焦点
                     popupWindow.setOutsideTouchable(true);//获取外部触摸事件
                     popupWindow.setTouchable(true);//能够响应触摸事件
@@ -300,12 +302,21 @@ public class XuanZeBaoBiaoActivity extends Activity {
 
                     ResponseBody body = response.body();
                     String ss=body.string().trim();
-                    Log.d("InFoActivity", "项目名" + ss);
+                  //  Log.d("InFoActivity", "项目名" + ss);
                     JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
-                    JsonObject jsonElement= jsonObject.get("account").getAsJsonObject();
-                    DengLuBean zhaoPianBean=gson.fromJson(jsonElement,DengLuBean.class);
-                    if (jsonObject.get("dtoResult").getAsString().equals("0")){}
+                    final XiangMuNameBean zhaoPianBean=gson.fromJson(jsonObject,XiangMuNameBean.class);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            stringList.clear();
+                            int size=zhaoPianBean.getObjects().size();
+                            for (int i=0;i<size;i++){
+                                stringList.add(zhaoPianBean.getObjects().get(i).getItem_name());
+                                adapterss.notifyDataSetChanged();
+                            }
+                        }
+                    });
 
                 }catch (Exception e){
 
